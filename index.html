@@ -238,6 +238,10 @@
 
 <script>
 
+const API_URL =
+    "https://movie-mind-api.pankouzaris.workers.dev/";
+
+
 async function getRecommendations() {
 
     const genre =
@@ -250,9 +254,22 @@ async function getRecommendations() {
         document.getElementById("plotTwist").value;
 
     const movies = [
-        document.getElementById("movie1").value.trim(),
-        document.getElementById("movie2").value.trim(),
-        document.getElementById("movie3").value.trim()
+
+        document
+            .getElementById("movie1")
+            .value
+            .trim(),
+
+        document
+            .getElementById("movie2")
+            .value
+            .trim(),
+
+        document
+            .getElementById("movie3")
+            .value
+            .trim()
+
     ].filter(movie => movie !== "");
 
 
@@ -271,71 +288,95 @@ async function getRecommendations() {
 
     button.disabled = true;
 
-
     results.classList.remove("hidden");
 
+
     movieResults.innerHTML = `
+
         <div class="loading">
+
             <div class="loader"></div>
+
             <p>
-                Our AI is searching for movies
-                that match your taste...
+                Our AI is searching the universe
+                for movies that match your taste...
             </p>
+
         </div>
+
     `;
 
 
     try {
 
-        /*
-        AI connection will be added next.
-        */
+        const response =
+            await fetch(
+                API_URL,
+                {
+                    method: "POST",
 
-        await new Promise(
-            resolve => setTimeout(resolve, 1500)
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        genre,
+                        period,
+                        plotTwist,
+                        movies
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.error ||
+                "Recommendation request failed."
+            );
+
+        }
+
+
+        displayMovies(
+            data.recommendations
         );
 
 
+    } catch (error) {
+
+        console.error(error);
+
         movieResults.innerHTML = `
+
             <div class="demo-message">
 
-                <h3>🎬 Your preferences are ready</h3>
+                <h3>
+                    Something went wrong
+                </h3>
 
                 <p>
-                    Genre: <strong>${genre}</strong>
+                    ${escapeHtml(
+                        error.message
+                    )}
                 </p>
 
                 <p>
-                    Release period:
-                    <strong>${period}</strong>
-                </p>
-
-                <p>
-                    Plot twist:
-                    <strong>${plotTwist}</strong>
-                </p>
-
-                <p>
-                    Favourite movies:
-                    <strong>
-                        ${movies.length
-                            ? movies.join(", ")
-                            : "None provided"}
-                    </strong>
-                </p>
-
-                <p>
-                    🤖 The AI recommendation engine
-                    will be connected next.
+                    Please try again.
                 </p>
 
             </div>
+
         `;
-
-    } catch (error) {
-
-        movieResults.innerHTML =
-            "<p>Something went wrong.</p>";
 
     }
 
@@ -344,6 +385,127 @@ async function getRecommendations() {
         "✦ FIND MY MOVIES";
 
     button.disabled = false;
+
+}
+
+
+function displayMovies(movies) {
+
+    const movieResults =
+        document.getElementById(
+            "movieResults"
+        );
+
+
+    movieResults.innerHTML = movies
+        .map((movie, index) => {
+
+            const poster =
+                movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                    : "";
+
+
+            return `
+
+                <article class="movie-card">
+
+                    ${
+                        poster
+                        ? `
+                            <img
+                                src="${poster}"
+                                alt="${escapeHtml(movie.title)} poster"
+                                class="movie-poster"
+                            >
+                        `
+                        : `
+                            <div class="movie-poster no-poster">
+                                🎬
+                            </div>
+                        `
+                    }
+
+
+                    <div class="movie-info">
+
+                        <div class="movie-number">
+                            #${index + 1}
+                        </div>
+
+                        <h3>
+                            ${escapeHtml(movie.title)}
+                        </h3>
+
+                        <div class="movie-meta">
+
+                            ${
+                                movie.year !== "Unknown"
+                                ? movie.year
+                                : ""
+                            }
+
+                            ${
+                                movie.rating
+                                ? ` · ⭐ ${Number(movie.rating).toFixed(1)}`
+                                : ""
+                            }
+
+                        </div>
+
+
+                        <p class="movie-overview">
+
+                            ${escapeHtml(
+                                movie.overview ||
+                                "No description available."
+                            )}
+
+                        </p>
+
+
+                        <div class="match-reason">
+
+                            <strong>
+                                Why it matches:
+                            </strong>
+
+                            ${escapeHtml(
+                                movie.reason
+                            )}
+
+                        </div>
+
+
+                        <a
+                            href="${movie.tmdb_url}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="tmdb-link"
+                        >
+                            View on TMDB →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            `;
+
+        })
+        .join("");
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
