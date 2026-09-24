@@ -1,516 +1,433 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>MovieMind | AI Movie Recommendations</title>
-
-    <meta name="description"
-        content="Find your next movie with AI-powered personalized recommendations.">
-
-    <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-    <div class="stars"></div>
-
-    <main class="container">
-
-        <section class="hero">
-
-            <div class="hero-badge">
-                ✦ AI MOVIE RECOMMENDER
-            </div>
-
-            <h1>
-                Find Your Next
-                <span>Movie.</span>
-            </h1>
-
-            <p>
-                Tell us what you love.
-                We'll find movies that match your taste.
-            </p>
-
-        </section>
-
-
-        <section class="recommendation-box">
-
-            <h2>🎬 Your Movie Preferences</h2>
-
-
-            <!-- GENRE -->
-
-            <div class="form-section">
-
-                <label for="genre">
-                    What genre are you in the mood for?
-                </label>
-
-                <select id="genre">
-
-                    <option value="any">Any</option>
-
-                    <option value="science fiction">
-                        Sci-Fi
-                    </option>
-
-                    <option value="thriller">
-                        Thriller
-                    </option>
-
-                    <option value="action">
-                        Action
-                    </option>
-
-                    <option value="drama">
-                        Drama
-                    </option>
-
-                    <option value="comedy">
-                        Comedy
-                    </option>
-
-                    <option value="horror">
-                        Horror
-                    </option>
-
-                    <option value="romance">
-                        Romance
-                    </option>
-
-                    <option value="mystery">
-                        Mystery
-                    </option>
-
-                    <option value="adventure">
-                        Adventure
-                    </option>
-
-                    <option value="fantasy">
-                        Fantasy
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- RELEASE PERIOD -->
-
-            <div class="form-section">
-
-                <label for="period">
-                    What release period?
-                </label>
-
-                <select id="period">
-
-                    <option value="any">
-                        Any
-                    </option>
-
-                    <option value="2020-2027">
-                        2020 – 2027
-                    </option>
-
-                    <option value="2010-2020">
-                        2010 – 2020
-                    </option>
-
-                    <option value="2000-2010">
-                        2000 – 2010
-                    </option>
-
-                    <option value="1990-2000">
-                        1990 – 2000
-                    </option>
-
-                    <option value="1980-1990">
-                        1980 – 1990
-                    </option>
-
-                    <option value="before-1980">
-                        Before 1980
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- PLOT TWIST -->
-
-            <div class="form-section">
-
-                <label for="plotTwist">
-                    Do you want a plot twist?
-                </label>
-
-                <select id="plotTwist">
-
-                    <option value="any">
-                        Any
-                    </option>
-
-                    <option value="yes">
-                        Yes — I want a plot twist
-                    </option>
-
-                    <option value="no">
-                        No — keep it straightforward
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- FAVOURITE MOVIES -->
-
-            <div class="form-section">
-
-                <label>
-                    Name up to 3 movies you love
-                </label>
-
-                <p class="hint">
-                    These help the AI understand your taste.
-                </p>
-
-                <input
-                    type="text"
-                    id="movie1"
-                    placeholder="Favourite movie #1"
-                >
-
-                <input
-                    type="text"
-                    id="movie2"
-                    placeholder="Favourite movie #2"
-                >
-
-                <input
-                    type="text"
-                    id="movie3"
-                    placeholder="Favourite movie #3"
-                >
-
-            </div>
-
-
-            <button
-                id="recommendButton"
-                onclick="getRecommendations()"
-            >
-                ✦ FIND MY MOVIES
-            </button>
-
-        </section>
-
-
-        <!-- RESULTS -->
-
-        <section
-            id="results"
-            class="results hidden"
-        >
-
-            <h2>
-                Your AI Recommendations
-            </h2>
-
-            <div id="movieResults"></div>
-
-        </section>
-
-
-        <footer>
-            MovieMind · AI Movie Recommendations
-        </footer>
-
-    </main>
-
-
-<script>
-
-const API_URL =
-    "https://movie-mind-api.pankouzaris.workers.dev/";
-
-
-async function getRecommendations() {
-
-    const genre =
-        document.getElementById("genre").value;
-
-    const period =
-        document.getElementById("period").value;
-
-    const plotTwist =
-        document.getElementById("plotTwist").value;
-
-    const movies = [
-
-        document
-            .getElementById("movie1")
-            .value
-            .trim(),
-
-        document
-            .getElementById("movie2")
-            .value
-            .trim(),
-
-        document
-            .getElementById("movie3")
-            .value
-            .trim()
-
-    ].filter(movie => movie !== "");
-
-
-    const results =
-        document.getElementById("results");
-
-    const movieResults =
-        document.getElementById("movieResults");
-
-    const button =
-        document.getElementById("recommendButton");
-
-
-    button.innerText =
-        "🤖 FINDING YOUR MOVIES...";
-
-    button.disabled = true;
-
-    results.classList.remove("hidden");
-
-
-    movieResults.innerHTML = `
-
-        <div class="loading">
-
-            <div class="loader"></div>
-
-            <p>
-                Our AI is searching the universe
-                for movies that match your taste...
-            </p>
-
-        </div>
-
-    `;
-
-
-    try {
-
-        const response =
-            await fetch(
-                API_URL,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        genre,
-                        period,
-                        plotTwist,
-                        movies
-
-                    })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok || !data.success) {
-
-            throw new Error(
-                data.error ||
-                "Recommendation request failed."
-            );
-
-        }
-
-
-        displayMovies(
-            data.recommendations
-        );
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        movieResults.innerHTML = `
-
-            <div class="demo-message">
-
-                <h3>
-                    Something went wrong
-                </h3>
-
-                <p>
-                    ${escapeHtml(
-                        error.message
-                    )}
-                </p>
-
-                <p>
-                    Please try again.
-                </p>
-
-            </div>
-
-        `;
-
-    }
-
-
-    button.innerText =
-        "✦ FIND MY MOVIES";
-
-    button.disabled = false;
-
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const GEMINI_MODEL = "gemini-3.6-flash";
+
+const GENRES = {
+"science fiction": 878,
+"thriller": 53,
+"action": 28,
+"drama": 18,
+"comedy": 35,
+"horror": 27,
+"romance": 10749,
+"mystery": 9648,
+"adventure": 12,
+"fantasy": 14
+};
+
+const CORS_HEADERS = {
+"Access-Control-Allow-Origin": "*",
+"Access-Control-Allow-Methods": "POST, OPTIONS",
+"Access-Control-Allow-Headers": "Content-Type"
+};
+
+export default {
+async fetch(request, env) {
+
+if (request.method === "OPTIONS") {
+return new Response(null, {
+status: 204,
+headers: CORS_HEADERS
+});
+}
+
+if (request.method !== "POST") {
+return jsonResponse(
+{ error: "Only POST requests are allowed." },
+405
+);
+}
+
+try {
+
+const body = await request.json();
+
+const genre = body.genre || "any";
+const period = body.period || "any";
+const plotTwist = body.plotTwist || "any";
+
+const favoriteMovies =
+Array.isArray(body.movies)
+? body.movies.slice(0, 3)
+: [];
+
+// -----------------------------
+// TMDB MOVIE DISCOVERY
+// -----------------------------
+
+const params = new URLSearchParams();
+
+params.set("api_key", env.TMDB_API_KEY);
+params.set("language", "en-US");
+params.set("sort_by", "popularity.desc");
+params.set("include_adult", "false");
+params.set("include_video", "false");
+params.set("page", "1");
+params.set("vote_count.gte", "50");
+
+if (genre !== "any" && GENRES[genre]) {
+params.set(
+"with_genres",
+GENRES[genre].toString()
+);
+}
+
+const dates = getDateRange(period);
+
+if (dates.gte) {
+params.set(
+"primary_release_date.gte",
+dates.gte
+);
+}
+
+if (dates.lte) {
+params.set(
+"primary_release_date.lte",
+dates.lte
+);
+}
+
+const discoverUrl =
+`${TMDB_BASE}/discover/movie?${params.toString()}`;
+
+const discoverResponse =
+await fetch(discoverUrl);
+
+if (!discoverResponse.ok) {
+const errorText =
+await discoverResponse.text();
+
+throw new Error(
+`TMDB error ${discoverResponse.status}: ${errorText}`
+);
+}
+
+const discoverData =
+await discoverResponse.json();
+
+const candidates =
+(discoverData.results || [])
+.slice(0, 30)
+.map(movie => ({
+id: movie.id,
+title: movie.title,
+release_date: movie.release_date,
+year: movie.release_date
+? movie.release_date.substring(0, 4)
+: "Unknown",
+overview: movie.overview || "",
+rating: movie.vote_average,
+vote_count: movie.vote_count,
+poster_path: movie.poster_path
+}));
+
+// -----------------------------
+// FIND USER'S FAVORITE MOVIES
+// -----------------------------
+
+const favoriteDetails = [];
+
+for (const movieName of favoriteMovies) {
+
+if (!movieName) continue;
+
+const searchParams =
+new URLSearchParams();
+
+searchParams.set(
+"api_key",
+env.TMDB_API_KEY
+);
+
+searchParams.set(
+"query",
+movieName
+);
+
+searchParams.set(
+"language",
+"en-US"
+);
+
+searchParams.set(
+"include_adult",
+"false"
+);
+
+const searchUrl =
+`${TMDB_BASE}/search/movie?${searchParams.toString()}`;
+
+const searchResponse =
+await fetch(searchUrl);
+
+if (!searchResponse.ok) {
+continue;
+}
+
+const searchData =
+await searchResponse.json();
+
+const match =
+searchData.results?.[0];
+
+if (match) {
+favoriteDetails.push({
+id: match.id,
+title: match.title,
+year: match.release_date
+? match.release_date.substring(0, 4)
+: "Unknown",
+overview: match.overview || "",
+rating: match.vote_average
+});
+}
+}
+
+// -----------------------------
+// GEMINI PERSONALIZATION
+// -----------------------------
+
+const prompt = `
+You are MovieMind, an AI movie recommendation engine.
+
+Choose exactly 10 movies from the supplied TMDB candidate list.
+
+USER PREFERENCES
+
+Genre:
+${genre}
+
+Release period:
+${period}
+
+Plot twist preference:
+${plotTwist}
+
+USER FAVORITES:
+${JSON.stringify(favoriteDetails, null, 2)}
+
+RULES
+
+1. Return exactly 10 different movies.
+2. Only select movies from the candidate list.
+3. Never invent an ID.
+4. Never recommend one of the user's favorite movies.
+5. Use the user's favorite movies to understand their taste.
+6. Respect the requested genre and release period.
+7. If plotTwist is "yes", favor movies known for meaningful twists,
+mysteries, reveals, surprises, or unconventional storytelling.
+8. If plotTwist is "no", prefer more straightforward storytelling.
+9. If plotTwist is "any", ignore that preference.
+10. Never reveal a plot twist in the explanation.
+11. Do not invent movie facts.
+12. Prefer personalized matches over simple popularity.
+13. Give a short explanation for every recommendation.
+14. Return JSON only.
+
+CANDIDATE MOVIES:
+${JSON.stringify(candidates, null, 2)}
+
+Return:
+
+{
+"recommendations": [
+{
+"id": 123,
+"reason": "Short explanation of why this movie matches."
+}
+]
+}
+`;
+
+const geminiUrl =
+`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+const geminiResponse =
+await fetch(
+geminiUrl,
+{
+method: "POST",
+
+headers: {
+"Content-Type":
+"application/json",
+
+"x-goog-api-key":
+env.GEMINI_API_KEY
+},
+
+body: JSON.stringify({
+contents: [
+{
+parts: [
+{
+text: prompt
+}
+]
+}
+],
+
+generationConfig: {
+responseMimeType:
+"application/json"
+}
+})
+}
+);
+
+if (!geminiResponse.ok) {
+
+const errorText =
+await geminiResponse.text();
+
+throw new Error(
+`Gemini error ${geminiResponse.status}: ${errorText}`
+);
+}
+
+const geminiData =
+await geminiResponse.json();
+
+const generatedText =
+geminiData
+?.candidates?.[0]
+?.content?.parts?.[0]
+?.text;
+
+if (!generatedText) {
+throw new Error(
+"Gemini returned no recommendations."
+);
+}
+
+const aiResult =
+JSON.parse(generatedText);
+
+// -----------------------------
+// MATCH AI RESULTS TO TMDB
+// -----------------------------
+
+const movieMap =
+new Map(
+candidates.map(movie => [
+movie.id,
+movie
+])
+);
+
+const recommendations =
+aiResult.recommendations
+.slice(0, 10)
+.map(item => {
+
+const movie =
+movieMap.get(item.id);
+
+if (!movie) {
+return null;
+}
+
+return {
+id: movie.id,
+title: movie.title,
+year: movie.year,
+overview: movie.overview,
+rating: movie.rating,
+poster_path:
+movie.poster_path,
+reason: item.reason,
+tmdb_url:
+`https://www.themoviedb.org/movie/${movie.id}`
+};
+})
+.filter(Boolean);
+
+if (recommendations.length < 10) {
+throw new Error(
+"The AI returned fewer than 10 valid movies."
+);
+}
+
+return jsonResponse({
+success: true,
+recommendations
+});
+
+} catch (error) {
+
+console.error(error);
+
+return jsonResponse(
+{
+success: false,
+error:
+error.message ||
+"Something went wrong."
+},
+500
+);
+}
+}
+};
+
+
+function getDateRange(period) {
+
+switch (period) {
+
+case "2020-2027":
+return {
+gte: "2020-01-01",
+lte: "2027-12-31"
+};
+
+case "2010-2020":
+return {
+gte: "2010-01-01",
+lte: "2020-12-31"
+};
+
+case "2000-2010":
+return {
+gte: "2000-01-01",
+lte: "2010-12-31"
+};
+
+case "1990-2000":
+return {
+gte: "1990-01-01",
+lte: "2000-12-31"
+};
+
+case "1980-1990":
+return {
+gte: "1980-01-01",
+lte: "1990-12-31"
+};
+
+case "before-1980":
+return {
+lte: "1979-12-31"
+};
+
+default:
+return {};
+}
 }
 
 
-function displayMovies(movies) {
+function jsonResponse(data, status = 200) {
 
-    const movieResults =
-        document.getElementById(
-            "movieResults"
-        );
+return new Response(
+JSON.stringify(data),
+{
+status,
+headers: {
+"Content-Type":
+"application/json",
 
-
-    movieResults.innerHTML = movies
-        .map((movie, index) => {
-
-            const poster =
-                movie.poster_path
-                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                    : "";
-
-
-            return `
-
-                <article class="movie-card">
-
-                    ${
-                        poster
-                        ? `
-                            <img
-                                src="${poster}"
-                                alt="${escapeHtml(movie.title)} poster"
-                                class="movie-poster"
-                            >
-                        `
-                        : `
-                            <div class="movie-poster no-poster">
-                                🎬
-                            </div>
-                        `
-                    }
-
-
-                    <div class="movie-info">
-
-                        <div class="movie-number">
-                            #${index + 1}
-                        </div>
-
-                        <h3>
-                            ${escapeHtml(movie.title)}
-                        </h3>
-
-                        <div class="movie-meta">
-
-                            ${
-                                movie.year !== "Unknown"
-                                ? movie.year
-                                : ""
-                            }
-
-                            ${
-                                movie.rating
-                                ? ` · ⭐ ${Number(movie.rating).toFixed(1)}`
-                                : ""
-                            }
-
-                        </div>
-
-
-                        <p class="movie-overview">
-
-                            ${escapeHtml(
-                                movie.overview ||
-                                "No description available."
-                            )}
-
-                        </p>
-
-
-                        <div class="match-reason">
-
-                            <strong>
-                                Why it matches:
-                            </strong>
-
-                            ${escapeHtml(
-                                movie.reason
-                            )}
-
-                        </div>
-
-
-                        <a
-                            href="${movie.tmdb_url}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="tmdb-link"
-                        >
-                            View on TMDB →
-                        </a>
-
-                    </div>
-
-                </article>
-
-            `;
-
-        })
-        .join("");
-
+...CORS_HEADERS
 }
-
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
 }
-
-</script>
-
-</body>
-
-</html>
+);
+}
