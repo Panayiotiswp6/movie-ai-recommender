@@ -3,468 +3,434 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>MovieMind AI</title>
 
-<meta
-name="description"
-content="MovieMind AI gives you personalized movie recommendations using your taste, TMDB and Gemini AI."
->
+<meta name="description" content="MovieMind AI gives you personalized movie recommendations using your taste, TMDB and Gemini AI.">
 
 <style>
-* {
-box-sizing: border-box;
-}
+*{box-sizing:border-box}
 
-html {
-scroll-behavior: smooth;
-}
+html{scroll-behavior:smooth}
 
-body {
-margin: 0;
-font-family: Arial, Helvetica, sans-serif;
-color: #f5f7ff;
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+color:#f5f7ff;
 background:
-radial-gradient(
-circle at 50% 20%,
-#243b63 0%,
-#0b1224 35%,
-#03050c 75%
-);
-min-height: 100vh;
-overflow-x: hidden;
+radial-gradient(circle at 50% 15%,#243f70 0%,#0a1122 38%,#02040a 75%);
+min-height:100vh;
+overflow-x:hidden;
 }
 
-body::before,
-body::after {
-content: "";
-position: fixed;
-inset: 0;
-pointer-events: none;
-z-index: -1;
-
+body::before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:-2;
 background-image:
-radial-gradient(
-circle,
-rgba(255,255,255,0.8) 1px,
-transparent 1px
-),
-radial-gradient(
-circle,
-rgba(255,255,255,0.5) 1px,
-transparent 1px
-);
-
-background-size:
-140px 140px,
-220px 220px;
-
-background-position:
-20px 30px,
-80px 100px;
+radial-gradient(circle,rgba(255,255,255,.9) 1px,transparent 1px),
+radial-gradient(circle,rgba(150,200,255,.5) 1px,transparent 1px);
+background-size:150px 150px,230px 230px;
+background-position:20px 30px,80px 100px;
 }
 
-body::after {
-opacity: 0.35;
-transform: scale(1.4);
-}
-
-.container {
-width: min(900px, 92%);
-margin: auto;
-padding: 60px 0 30px;
-}
-
-/* HERO */
-
-.hero {
-text-align: center;
-margin-bottom: 45px;
-}
-
-.hero-badge {
-display: inline-block;
-padding: 8px 16px;
-border: 1px solid rgba(150, 190, 255, 0.4);
-border-radius: 30px;
-color: #b9d5ff;
-font-size: 13px;
-letter-spacing: 2px;
-margin-bottom: 20px;
-}
-
-.hero h1 {
-font-size: clamp(48px, 8vw, 82px);
-line-height: 1;
-margin: 0;
-font-weight: 700;
-letter-spacing: -3px;
-}
-
-.hero h1 span {
-display: block;
-color: #9fc7ff;
-}
-
-.hero p {
-max-width: 600px;
-margin: 25px auto 0;
-color: #aebbd0;
-font-size: 18px;
-line-height: 1.6;
-}
-
-/* MAIN BOX */
-
-.recommendation-box {
-background: rgba(10, 18, 35, 0.82);
-border: 1px solid rgba(150, 180, 230, 0.18);
-border-radius: 24px;
-padding: 35px;
-box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45);
-backdrop-filter: blur(12px);
-}
-
-.recommendation-box h2 {
-margin-top: 0;
-margin-bottom: 30px;
-font-size: 27px;
-}
-
-/* FORM */
-
-.form-section {
-margin-bottom: 28px;
-}
-
-.form-section label {
-display: block;
-margin-bottom: 10px;
-font-weight: bold;
-color: #e8efff;
-}
-
-.hint {
-color: #8e9bb0;
-font-size: 14px;
-margin-top: -3px;
-margin-bottom: 12px;
-}
-
-select,
-input {
-width: 100%;
-padding: 15px;
-border-radius: 10px;
-border: 1px solid #34435e;
-background: #111b30;
-color: white;
-font-size: 16px;
-outline: none;
-margin-bottom: 10px;
-}
-
-select:focus,
-input:focus {
-border-color: #7ca9ff;
-box-shadow:
-0 0 0 3px rgba(124, 169, 255, 0.12);
-}
-
-#recommendButton {
-width: 100%;
-margin-top: 10px;
-padding: 17px;
-border: none;
-border-radius: 12px;
+body::after{
+content:"";
+position:fixed;
+width:700px;
+height:700px;
+right:-250px;
+top:100px;
+border-radius:50%;
 background:
-linear-gradient(
-135deg,
-#5b8def,
-#8fbcff
-);
-color: #06101f;
-font-size: 16px;
-font-weight: bold;
-letter-spacing: 1px;
-cursor: pointer;
-transition: 0.25s;
+radial-gradient(circle,#020205 18%,#11111d 30%,transparent 45%),
+conic-gradient(from 20deg,transparent,#557fc8,#b7d6ff,#496ca8,transparent);
+filter:blur(2px);
+opacity:.28;
+z-index:-1;
 }
 
-#recommendButton:hover {
-transform: translateY(-2px);
-box-shadow:
-0 10px 30px rgba(100, 150, 255, 0.25);
+.container{
+width:min(900px,92%);
+margin:auto;
+padding:55px 0 30px;
 }
 
-#recommendButton:disabled {
-opacity: 0.6;
-cursor: wait;
+.hero{
+text-align:center;
+margin-bottom:40px;
 }
 
-/* RESULTS */
-
-.results {
-margin-top: 45px;
+.hero-badge{
+display:inline-block;
+padding:8px 16px;
+border:1px solid rgba(160,200,255,.4);
+border-radius:30px;
+color:#b9d5ff;
+font-size:12px;
+letter-spacing:3px;
+margin-bottom:18px;
 }
 
-.results h2 {
-text-align: center;
-font-size: 30px;
-margin-bottom: 25px;
+.hero h1{
+font-size:clamp(52px,9vw,86px);
+line-height:.95;
+margin:0;
+letter-spacing:-4px;
 }
 
-.hidden {
-display: none;
+.hero h1 span{
+display:block;
+color:#9fc7ff;
 }
 
-.loading {
-text-align: center;
-padding: 35px;
-color: #aebbd0;
+.hero p{
+max-width:620px;
+margin:24px auto 0;
+color:#aebbd0;
+font-size:18px;
+line-height:1.6;
 }
 
-.loader {
-width: 40px;
-height: 40px;
-margin: 0 auto 20px;
-border: 3px solid #34435e;
-border-top-color: #8fbcff;
-border-radius: 50%;
-animation: spin 1s linear infinite;
+.creator{
+margin-top:22px;
+font-size:18px;
+letter-spacing:1px;
+color:#dce9ff;
 }
 
-@keyframes spin {
-to {
-transform: rotate(360deg);
-}
-}
-
-/* MOVIE CARDS */
-
-#movieResults {
-display: grid;
-gap: 22px;
+.creator strong{
+color:#9fc7ff;
+font-size:21px;
 }
 
-.movie-card {
-display: grid;
-grid-template-columns: 150px 1fr;
-gap: 24px;
-
-background: rgba(10, 18, 35, 0.88);
-
-border: 1px solid rgba(140, 175, 230, 0.18);
-
-border-radius: 20px;
-
-padding: 18px;
-
-box-shadow:
-0 15px 45px rgba(0, 0, 0, 0.3);
-
-transition:
-transform 0.25s,
-border-color 0.25s;
+.space-line{
+margin:32px auto 0;
+width:180px;
+height:1px;
+background:linear-gradient(90deg,transparent,#8fbcff,transparent);
 }
 
-.movie-card:hover {
-transform: translateY(-3px);
-
-border-color:
-rgba(143, 188, 255, 0.4);
+.cosmic{
+display:flex;
+justify-content:center;
+gap:22px;
+flex-wrap:wrap;
+margin:25px 0 35px;
+color:#8295b5;
+font-size:12px;
+letter-spacing:2px;
 }
 
-.movie-poster {
-width: 150px;
-height: 225px;
-
-object-fit: cover;
-
-border-radius: 12px;
-
-background: #111b30;
+.cosmic span{
+padding:8px 13px;
+border:1px solid rgba(140,175,230,.15);
+border-radius:20px;
+background:rgba(10,18,35,.45);
 }
 
-.no-poster {
-display: flex;
-align-items: center;
-justify-content: center;
-
-font-size: 40px;
+.recommendation-box{
+background:rgba(8,16,32,.86);
+border:1px solid rgba(150,180,230,.2);
+border-radius:24px;
+padding:35px;
+box-shadow:0 25px 80px rgba(0,0,0,.5);
+backdrop-filter:blur(14px);
 }
 
-.movie-info {
-padding: 5px 5px 5px 0;
+.recommendation-box h2{
+margin-top:0;
+margin-bottom:30px;
+font-size:27px;
 }
 
-.movie-number {
-color: #8fbcff;
-
-font-size: 13px;
-
-font-weight: bold;
-
-letter-spacing: 1px;
-
-margin-bottom: 5px;
+.form-section{
+margin-bottom:28px;
 }
 
-.movie-info h3 {
-margin: 0 0 7px;
-
-font-size: 25px;
-
-color: #f5f7ff;
+.form-section label{
+display:block;
+margin-bottom:10px;
+font-weight:bold;
+color:#e8efff;
 }
 
-.movie-meta {
-color: #91a1bb;
-
-font-size: 14px;
-
-margin-bottom: 15px;
+.hint{
+color:#8e9bb0;
+font-size:14px;
+margin:-3px 0 12px;
 }
 
-.movie-overview {
-color: #b9c5d8;
-
-line-height: 1.6;
-
-margin-bottom: 15px;
+select,input{
+width:100%;
+padding:15px;
+border-radius:10px;
+border:1px solid #34435e;
+background:#111b30;
+color:white;
+font-size:16px;
+outline:none;
+margin-bottom:10px;
 }
 
-.match-reason {
-padding: 13px 15px;
-
-border-radius: 10px;
-
-background:
-rgba(60, 90, 140, 0.12);
-
-border-left:
-3px solid #7ca9ff;
-
-color: #cbd7ea;
-
-line-height: 1.5;
-
-margin-bottom: 16px;
+select:focus,input:focus{
+border-color:#7ca9ff;
+box-shadow:0 0 0 3px rgba(124,169,255,.12);
 }
 
-.match-reason strong {
-color: #b9d5ff;
+#recommendButton{
+width:100%;
+margin-top:10px;
+padding:17px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#5b8def,#a8ceff);
+color:#06101f;
+font-size:16px;
+font-weight:bold;
+letter-spacing:1px;
+cursor:pointer;
+transition:.25s;
 }
 
-.tmdb-link {
-display: inline-block;
-
-color: #9fc7ff;
-
-text-decoration: none;
-
-font-weight: bold;
-
-font-size: 14px;
+#recommendButton:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 30px rgba(100,150,255,.3);
 }
 
-.tmdb-link:hover {
-text-decoration: underline;
+#recommendButton:disabled{
+opacity:.6;
+cursor:wait;
 }
 
-/* STATUS */
-
-.status-message {
-background:
-rgba(15, 26, 48, 0.9);
-
-border:
-1px solid rgba(140, 175, 230, 0.2);
-
-border-radius: 18px;
-
-padding: 25px;
-
-line-height: 1.6;
+.results{
+margin-top:45px;
 }
 
-.status-message h3 {
-margin-top: 0;
-
-color: #b9d5ff;
+.results h2{
+text-align:center;
+font-size:30px;
+margin-bottom:25px;
 }
 
-.status-message.error {
-border-color:
-rgba(255, 100, 100, 0.35);
+.hidden{
+display:none;
 }
 
-.fallback-note {
-color: #91a1bb;
-text-align: center;
-font-size: 13px;
-margin-top: 15px;
+.loading{
+text-align:center;
+padding:35px;
+color:#aebbd0;
 }
 
-/* FOOTER */
-
-footer {
-text-align: center;
-
-margin-top: 60px;
-
-padding: 25px;
-
-color: #68758b;
-
-font-size: 13px;
-
-line-height: 1.6;
+.loader{
+width:40px;
+height:40px;
+margin:0 auto 20px;
+border:3px solid #34435e;
+border-top-color:#8fbcff;
+border-radius:50%;
+animation:spin 1s linear infinite;
 }
 
-/* MOBILE */
-
-@media (max-width: 600px) {
-
-.container {
-width: 94%;
-padding-top: 35px;
+@keyframes spin{
+to{transform:rotate(360deg)}
 }
 
-.hero h1 {
-font-size: 48px;
+#movieResults{
+display:grid;
+gap:22px;
 }
 
-.hero p {
-font-size: 16px;
+.movie-card{
+display:grid;
+grid-template-columns:150px 1fr;
+gap:24px;
+background:rgba(8,16,32,.9);
+border:1px solid rgba(140,175,230,.18);
+border-radius:20px;
+padding:18px;
+box-shadow:0 15px 45px rgba(0,0,0,.35);
+transition:.25s;
 }
 
-.recommendation-box {
-padding: 22px;
-border-radius: 18px;
+.movie-card:hover{
+transform:translateY(-3px);
+border-color:rgba(143,188,255,.4);
 }
 
-.recommendation-box h2 {
-font-size: 23px;
+.movie-poster{
+width:150px;
+height:225px;
+object-fit:cover;
+border-radius:12px;
+background:#111b30;
 }
 
-.movie-card {
-grid-template-columns: 100px 1fr;
-gap: 15px;
-padding: 14px;
+.no-poster{
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
 }
 
-.movie-poster {
-width: 100px;
-height: 150px;
+.movie-info{
+padding:5px 5px 5px 0;
 }
 
-.movie-info h3 {
-font-size: 19px;
+.movie-number{
+color:#8fbcff;
+font-size:13px;
+font-weight:bold;
+letter-spacing:1px;
+margin-bottom:5px;
 }
 
-.movie-overview {
-font-size: 14px;
+.movie-info h3{
+margin:0 0 7px;
+font-size:25px;
+color:#f5f7ff;
+}
+
+.movie-meta{
+color:#91a1bb;
+font-size:14px;
+margin-bottom:15px;
+}
+
+.movie-overview{
+color:#b9c5d8;
+line-height:1.6;
+margin-bottom:15px;
+}
+
+.match-reason{
+padding:13px 15px;
+border-radius:10px;
+background:rgba(60,90,140,.12);
+border-left:3px solid #7ca9ff;
+color:#cbd7ea;
+line-height:1.5;
+margin-bottom:16px;
+}
+
+.match-reason strong{
+color:#b9d5ff;
+}
+
+.tmdb-link{
+display:inline-block;
+color:#9fc7ff;
+text-decoration:none;
+font-weight:bold;
+font-size:14px;
+}
+
+.tmdb-link:hover{
+text-decoration:underline;
+}
+
+.status-message{
+background:rgba(15,26,48,.9);
+border:1px solid rgba(140,175,230,.2);
+border-radius:18px;
+padding:25px;
+line-height:1.6;
+}
+
+.status-message h3{
+margin-top:0;
+color:#b9d5ff;
+}
+
+.status-message.error{
+border-color:rgba(255,100,100,.35);
+}
+
+.fallback-note{
+color:#91a1bb;
+text-align:center;
+font-size:13px;
+margin-top:15px;
+}
+
+footer{
+text-align:center;
+margin-top:55px;
+padding:25px 10px;
+color:#71809a;
+font-size:12px;
+line-height:1.6;
+}
+
+.footer-credit{
+font-size:20px;
+color:#dce9ff;
+margin-bottom:14px;
+}
+
+.footer-credit strong{
+color:#9fc7ff;
+}
+
+@media(max-width:600px){
+
+.container{
+width:94%;
+padding-top:35px;
+}
+
+.hero h1{
+font-size:50px;
+}
+
+.hero p{
+font-size:16px;
+}
+
+.creator{
+font-size:16px;
+}
+
+.creator strong{
+font-size:19px;
+}
+
+.recommendation-box{
+padding:22px;
+border-radius:18px;
+}
+
+.recommendation-box h2{
+font-size:23px;
+}
+
+.movie-card{
+grid-template-columns:100px 1fr;
+gap:15px;
+padding:14px;
+}
+
+.movie-poster{
+width:100px;
+height:150px;
+}
+
+.movie-info h3{
+font-size:19px;
+}
+
+.movie-overview{
+font-size:14px;
+}
+
+.cosmic{
+gap:8px;
+}
+
+.cosmic span{
+font-size:10px;
 }
 }
 </style>
@@ -473,8 +439,6 @@ font-size: 14px;
 <body>
 
 <div class="container">
-
-<!-- HERO -->
 
 <section class="hero">
 
@@ -492,19 +456,24 @@ It will search real movie data and use AI
 to find films that fit your taste.
 </p>
 
+<div class="creator">
+Created by <strong>Panayiotis Kouzaris</strong>
+</div>
+
+<div class="space-line"></div>
+
+<div class="cosmic">
+<span>GARGANTUA</span>
+<span>WORMHOLE</span>
+<span>THE ENDURANCE</span>
+<span>TIME</span>
+</div>
+
 </section>
-
-
-<!-- FORM -->
 
 <section class="recommendation-box">
 
-<h2>
-Find movies you'll love
-</h2>
-
-
-<!-- GENRE -->
+<h2>Find movies you'll love</h2>
 
 <div class="form-section">
 
@@ -514,56 +483,21 @@ What genre are you in the mood for?
 
 <select id="genre">
 
-<option value="any">
-Any genre
-</option>
-
-<option value="science fiction">
-Science Fiction
-</option>
-
-<option value="thriller">
-Thriller
-</option>
-
-<option value="action">
-Action
-</option>
-
-<option value="drama">
-Drama
-</option>
-
-<option value="comedy">
-Comedy
-</option>
-
-<option value="horror">
-Horror
-</option>
-
-<option value="romance">
-Romance
-</option>
-
-<option value="mystery">
-Mystery
-</option>
-
-<option value="adventure">
-Adventure
-</option>
-
-<option value="fantasy">
-Fantasy
-</option>
+<option value="any">Any genre</option>
+<option value="science fiction">Science Fiction</option>
+<option value="thriller">Thriller</option>
+<option value="action">Action</option>
+<option value="drama">Drama</option>
+<option value="comedy">Comedy</option>
+<option value="horror">Horror</option>
+<option value="romance">Romance</option>
+<option value="mystery">Mystery</option>
+<option value="adventure">Adventure</option>
+<option value="fantasy">Fantasy</option>
 
 </select>
 
 </div>
-
-
-<!-- PERIOD -->
 
 <div class="form-section">
 
@@ -573,40 +507,17 @@ When should the movie be from?
 
 <select id="period">
 
-<option value="any">
-Any period
-</option>
-
-<option value="2020-2027">
-2020–2027
-</option>
-
-<option value="2010-2020">
-2010–2020
-</option>
-
-<option value="2000-2010">
-2000–2010
-</option>
-
-<option value="1990-2000">
-1990–2000
-</option>
-
-<option value="1980-1990">
-1980–1990
-</option>
-
-<option value="before-1980">
-Before 1980
-</option>
+<option value="any">Any period</option>
+<option value="2020-2027">2020–2027</option>
+<option value="2010-2020">2010–2020</option>
+<option value="2000-2010">2000–2010</option>
+<option value="1990-2000">1990–2000</option>
+<option value="1980-1990">1980–1990</option>
+<option value="before-1980">Before 1980</option>
 
 </select>
 
 </div>
-
-
-<!-- PLOT TWIST -->
 
 <div class="form-section">
 
@@ -616,24 +527,13 @@ Do you want a plot twist?
 
 <select id="plotTwist">
 
-<option value="any">
-Any
-</option>
-
-<option value="yes">
-Yes — I want a plot twist
-</option>
-
-<option value="no">
-No — keep it straightforward
-</option>
+<option value="any">Any</option>
+<option value="yes">Yes — I want a plot twist</option>
+<option value="no">No — keep it straightforward</option>
 
 </select>
 
 </div>
-
-
-<!-- FAVORITES -->
 
 <div class="form-section">
 
@@ -644,7 +544,6 @@ Name up to 3 movies you love
 <div class="hint">
 These help the AI understand your taste.
 </div>
-
 
 <input
 id="favorite1"
@@ -666,32 +565,17 @@ placeholder="e.g. The Usual Suspects"
 
 </div>
 
-
-<!-- BUTTON -->
-
 <button id="recommendButton">
 ✦ FIND MY MOVIES
 </button>
 
 </section>
 
+<section id="results" class="results hidden">
 
-<!-- RESULTS -->
+<h2>Your AI Recommendations</h2>
 
-<section
-id="results"
-class="results hidden"
->
-
-<h2>
-Your AI Recommendations
-</h2>
-
-
-<div
-id="loading"
-class="loading hidden"
->
+<div id="loading" class="loading hidden">
 
 <div class="loader"></div>
 
@@ -701,19 +585,15 @@ MovieMind is searching the stars...
 
 </div>
 
-
 <div id="movieResults"></div>
 
 </section>
 
-
-<!-- FOOTER -->
-
 <footer>
 
-MovieMind · AI Movie Recommendations
-
-<br><br>
+<div class="footer-credit">
+Created by <strong>Panayiotis Kouzaris</strong>
+</div>
 
 This product uses the TMDB API but is not endorsed
 or certified by TMDB.
@@ -722,263 +602,161 @@ or certified by TMDB.
 
 </div>
 
-
 <script>
-
-// ==========================================================
-// YOUR CLOUDFLARE WORKER
-// ==========================================================
 
 const API_URL =
 "https://movie-mind-api.pankouzaris.workers.dev/";
 
-
-// ==========================================================
-// ELEMENTS
-// ==========================================================
-
 const recommendButton =
-document.getElementById(
-"recommendButton"
-);
+document.getElementById("recommendButton");
 
 const resultsSection =
-document.getElementById(
-"results"
-);
+document.getElementById("results");
 
 const loading =
-document.getElementById(
-"loading"
-);
+document.getElementById("loading");
 
 const movieResults =
-document.getElementById(
-"movieResults"
-);
-
-
-// ==========================================================
-// BUTTON
-// ==========================================================
+document.getElementById("movieResults");
 
 recommendButton.addEventListener(
 "click",
 findMovies
 );
 
-
-// ==========================================================
-// FIND MOVIES
-// ==========================================================
-
-async function findMovies() {
+async function findMovies(){
 
 const genre =
-document.getElementById(
-"genre"
-).value;
-
+document.getElementById("genre").value;
 
 const period =
-document.getElementById(
-"period"
-).value;
-
+document.getElementById("period").value;
 
 const plotTwist =
-document.getElementById(
-"plotTwist"
-).value;
-
+document.getElementById("plotTwist").value;
 
 const favoriteMovies = [
 
-document.getElementById(
-"favorite1"
-).value.trim(),
+document.getElementById("favorite1").value.trim(),
 
-document.getElementById(
-"favorite2"
-).value.trim(),
+document.getElementById("favorite2").value.trim(),
 
-document.getElementById(
-"favorite3"
-).value.trim()
+document.getElementById("favorite3").value.trim()
 
 ].filter(Boolean);
 
+resultsSection.classList.remove("hidden");
 
-// SHOW RESULTS AREA
-
-resultsSection.classList.remove(
-"hidden"
-);
-
-
-loading.classList.remove(
-"hidden"
-);
-
+loading.classList.remove("hidden");
 
 movieResults.innerHTML = "";
 
+recommendButton.disabled = true;
 
-recommendButton.disabled =
-true;
-
-
-recommendButton.textContent =
-"SEARCHING...";
-
+recommendButton.textContent = "SEARCHING...";
 
 resultsSection.scrollIntoView({
-behavior: "smooth"
+behavior:"smooth"
 });
 
+try{
 
-try {
-
-// SEND DATA TO CLOUDFLARE
-
-const response =
-await fetch(
+const response = await fetch(
 API_URL,
 {
-method: "POST",
+method:"POST",
 
-headers: {
-"Content-Type":
-"application/json"
+headers:{
+"Content-Type":"application/json"
 },
 
-body:
-JSON.stringify({
+body:JSON.stringify({
 
-genre:
-genre,
+genre:genre,
 
-period:
-period,
+period:period,
 
-plotTwist:
-plotTwist,
+plotTwist:plotTwist,
 
-favoriteMovies:
-favoriteMovies
+favoriteMovies:favoriteMovies
 
 })
 }
 );
 
-
 let data;
 
+try{
 
-try {
+data = await response.json();
 
-data =
-await response.json();
-
-} catch (error) {
+}catch(error){
 
 throw new Error(
 "The Cloudflare Worker returned an invalid response."
 );
+
 }
 
-
-if (!response.ok) {
+if(!response.ok){
 
 throw new Error(
 data.error ||
 `Server error ${response.status}`
 );
+
 }
 
-
-if (
+if(
 !data.success ||
-!Array.isArray(
-data.recommendations
-)
-) {
+!Array.isArray(data.recommendations)
+){
 
 throw new Error(
 data.error ||
 "No recommendations were returned."
 );
+
 }
-
-
-// DISPLAY MOVIES
 
 displayMovies(
 data.recommendations,
 data.source
 );
 
+}catch(error){
 
-} catch (error) {
+console.error(error);
 
-console.error(
-error
-);
+showError(error.message);
 
+}finally{
 
-showError(
-error.message
-);
+loading.classList.add("hidden");
 
-} finally {
-
-loading.classList.add(
-"hidden"
-);
-
-
-recommendButton.disabled =
-false;
-
+recommendButton.disabled = false;
 
 recommendButton.textContent =
 "✦ FIND MY MOVIES";
+
 }
+
 }
 
-
-// ==========================================================
-// DISPLAY MOVIES
-// ==========================================================
-
-function displayMovies(
-movies,
-source
-) {
+function displayMovies(movies,source){
 
 movieResults.innerHTML = "";
 
-
-movies.forEach(
-(movie, index) => {
+movies.forEach((movie,index)=>{
 
 const card =
-document.createElement(
-"article"
-);
+document.createElement("article");
 
+card.className = "movie-card";
 
-card.className =
-"movie-card";
+let posterHTML = "";
 
-
-let posterHTML =
-"";
-
-
-if (
-movie.poster_path
-) {
+if(movie.poster_path){
 
 posterHTML = `
 
@@ -991,7 +769,7 @@ loading="lazy"
 
 `;
 
-} else {
+}else{
 
 posterHTML = `
 
@@ -1000,19 +778,13 @@ posterHTML = `
 </div>
 
 `;
+
 }
 
-
 const rating =
-typeof movie.rating ===
-"number"
-
-? movie.rating.toFixed(
-1
-)
-
+typeof movie.rating === "number"
+? movie.rating.toFixed(1)
 : "N/A";
-
 
 card.innerHTML = `
 
@@ -1021,27 +793,20 @@ ${posterHTML}
 <div class="movie-info">
 
 <div class="movie-number">
-#${index + 1}
+#${index+1}
 </div>
 
 <h3>
-${escapeHtml(
-movie.title
-)}
+${escapeHtml(movie.title)}
 </h3>
 
 <div class="movie-meta">
 
-${escapeHtml(
-movie.year ||
-"Unknown"
-)}
+${escapeHtml(movie.year || "Unknown")}
 
 &nbsp; · &nbsp;
 
-⭐ ${escapeHtml(
-rating
-)}
+⭐ ${escapeHtml(rating)}
 
 </div>
 
@@ -1081,50 +846,27 @@ View on TMDB →
 </div>
 `;
 
+movieResults.appendChild(card);
 
-movieResults.appendChild(
-card
-);
+});
 
-}
-);
-
-
-// FALLBACK MESSAGE
-
-if (
-source ===
-"tmdb-fallback"
-) {
+if(source === "tmdb-fallback"){
 
 const note =
-document.createElement(
-"div"
-);
+document.createElement("div");
 
-
-note.className =
-"fallback-note";
-
+note.className = "fallback-note";
 
 note.textContent =
 "Gemini is temporarily unavailable, so these are TMDB-based matches for your selected preferences.";
 
+movieResults.appendChild(note);
 
-movieResults.appendChild(
-note
-);
-}
 }
 
+}
 
-// ==========================================================
-// ERROR
-// ==========================================================
-
-function showError(
-message
-) {
+function showError(message){
 
 movieResults.innerHTML = `
 
@@ -1135,9 +877,7 @@ Something went wrong
 </h3>
 
 <p>
-${escapeHtml(
-message
-)}
+${escapeHtml(message)}
 </p>
 
 <p>
@@ -1147,1278 +887,28 @@ Please try again.
 </div>
 
 `;
+
 }
 
+function escapeHtml(value){
 
-// ==========================================================
-// SECURITY
-// ==========================================================
+return String(value)
 
-function escapeHtml(
-value
-) {
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
-return String(
-value
-)
-.replace(
-/&/g,
-"&amp;"
-)
-.replace(
-/</g,
-"&lt;"
-)
-.replace(
-/>/g,
-"&gt;"
-)
-.replace(
-/"/g,
-"&quot;"
-)
-.replace(
-/'/g,
-"&#039;"
-);
 }
 
+function escapeAttribute(value){
 
-function escapeAttribute(
-value
-) {
+return escapeHtml(value);
 
-return escapeHtml(
-value
-);
 }
 
 </script>
 
 </body>
 </html>
-
-
-On Thu, Sep 24, 2026 at 11:59 PM Adarh <kouzarikonstantina@gmail.com> wrote:
-https://movie-mind-api.pankouzaris.workers.dev/
-
-Στις Πέμ 24 Σεπ 2026 στις 11:58 μ.μ., ο/η Panayiotis Kouzaris <pankouzaris@gmail.com> έγραψε:
-const TMDB_BASE =
-"https://api.themoviedb.org/3";
-
-
-const GEMINI_MODELS = [
-
-"gemini-3.8-flash",
-
-"gemini-3.7-flash",
-
-"gemini-3.6-flash",
-
-"gemini-3.5-flash"
-
-];
-
-
-const GENRES = {
-
-"science fiction": 878,
-
-"thriller": 53,
-
-"action": 28,
-
-"drama": 18,
-
-"comedy": 35,
-
-"horror": 27,
-
-"romance": 10749,
-
-"mystery": 9648,
-
-"adventure": 12,
-
-"fantasy": 14
-
-};
-
-
-const CORS_HEADERS = {
-
-"Access-Control-Allow-Origin": "*",
-
-"Access-Control-Allow-Methods":
-"POST, OPTIONS",
-
-"Access-Control-Allow-Headers":
-"Content-Type"
-
-};
-
-
-export default {
-
-async fetch(
-request,
-env
-) {
-
-// ======================================================
-// CORS
-// ======================================================
-
-if (
-request.method ===
-"OPTIONS"
-) {
-
-return new Response(
-null,
-{
-status: 204,
-headers:
-CORS_HEADERS
-}
-);
-}
-
-
-// ======================================================
-// ONLY POST
-// ======================================================
-
-if (
-request.method !==
-"POST"
-) {
-
-return jsonResponse(
-{
-success: false,
-
-error:
-"Only POST requests are allowed."
-},
-
-405
-);
-}
-
-
-try {
-
-const body =
-await request.json();
-
-
-const genre =
-body.genre ||
-"any";
-
-
-const period =
-body.period ||
-"any";
-
-
-const plotTwist =
-body.plotTwist ||
-"any";
-
-
-const favoriteMovies =
-Array.isArray(
-body.favoriteMovies
-)
-? body.favoriteMovies
-: [];
-
-
-// ==================================================
-// TMDB DISCOVERY
-// ==================================================
-
-const dateRange =
-getDateRange(
-period
-);
-
-
-const params =
-new URLSearchParams();
-
-
-params.set(
-"api_key",
-env.TMDB_API_KEY
-);
-
-
-params.set(
-"language",
-"en-US"
-);
-
-
-params.set(
-"sort_by",
-"popularity.desc"
-);
-
-
-params.set(
-"include_adult",
-"false"
-);
-
-
-params.set(
-"include_video",
-"false"
-);
-
-
-params.set(
-"page",
-"1"
-);
-
-
-params.set(
-"vote_count.gte",
-"50"
-);
-
-
-if (
-genre !== "any" &&
-GENRES[genre]
-) {
-
-params.set(
-"with_genres",
-
-GENRES[
-genre
-].toString()
-);
-}
-
-
-if (dateRange) {
-
-params.set(
-"primary_release_date.gte",
-
-dateRange.gte
-);
-
-
-params.set(
-"primary_release_date.lte",
-
-dateRange.lte
-);
-}
-
-
-const discoverUrl =
-`${TMDB_BASE}/discover/movie?${params.toString()}`;
-
-
-const discoverResponse =
-await fetch(
-discoverUrl
-);
-
-
-if (
-!discoverResponse.ok
-) {
-
-const errorText =
-await discoverResponse.text();
-
-
-throw new Error(
-`TMDB error ${discoverResponse.status}: ${errorText}`
-);
-}
-
-
-const discoverData =
-await discoverResponse.json();
-
-
-const candidates =
-(
-discoverData.results ||
-[]
-)
-.slice(
-0,
-30
-)
-.map(
-movie => ({
-
-id:
-movie.id,
-
-title:
-movie.title,
-
-release_date:
-movie.release_date ||
-"",
-
-year:
-movie.release_date
-? movie.release_date.substring(
-0,
-4
-)
-: "Unknown",
-
-overview:
-movie.overview ||
-"",
-
-rating:
-movie.vote_average ||
-0,
-
-vote_count:
-movie.vote_count ||
-0,
-
-poster_path:
-movie.poster_path ||
-null
-
-})
-);
-
-
-if (
-candidates.length <
-10
-) {
-
-throw new Error(
-"TMDB returned fewer than 10 movies."
-);
-}
-
-
-// ==================================================
-// SEARCH FAVORITES
-// ==================================================
-
-const favoriteDetails =
-[];
-
-
-for (
-const movieName
-of favoriteMovies
-) {
-
-if (
-!movieName ||
-!movieName.trim()
-) {
-
-continue;
-}
-
-
-const searchParams =
-new URLSearchParams();
-
-
-searchParams.set(
-"api_key",
-env.TMDB_API_KEY
-);
-
-
-searchParams.set(
-"query",
-movieName.trim()
-);
-
-
-searchParams.set(
-"language",
-"en-US"
-);
-
-
-searchParams.set(
-"include_adult",
-"false"
-);
-
-
-const searchUrl =
-`${TMDB_BASE}/search/movie?${searchParams.toString()}`;
-
-
-const searchResponse =
-await fetch(
-searchUrl
-);
-
-
-if (
-!searchResponse.ok
-) {
-
-continue;
-}
-
-
-const searchData =
-await searchResponse.json();
-
-
-const match =
-searchData
-?.results
-?.[0];
-
-
-if (match) {
-
-favoriteDetails.push({
-
-id:
-match.id,
-
-title:
-match.title,
-
-release_date:
-match.release_date ||
-"",
-
-year:
-match.release_date
-? match.release_date.substring(
-0,
-4
-)
-: "Unknown",
-
-overview:
-match.overview ||
-"",
-
-rating:
-match.vote_average ||
-0
-
-});
-}
-}
-
-
-// ==================================================
-// GEMINI PROMPT
-// ==================================================
-
-const prompt = `
-
-You are MovieMind, an intelligent movie recommendation engine.
-
-Choose exactly 10 movies from the supplied TMDB candidate list.
-
-USER PREFERENCES
-
-Genre:
-${genre}
-
-Release period:
-${period}
-
-Plot twist preference:
-${plotTwist}
-
-
-USER'S FAVORITE MOVIES:
-
-${JSON.stringify(
-favoriteDetails,
-null,
-2
-)}
-
-
-CANDIDATE MOVIES:
-
-${JSON.stringify(
-candidates,
-null,
-2
-)}
-
-
-RULES:
-
-1. Return exactly 10 movies.
-
-2. ONLY select movies from the supplied TMDB candidate list.
-
-3. Never invent a movie.
-
-4. Never invent a TMDB ID.
-
-5. Never recommend one of the user's favorite movies.
-
-6. Use the user's favorite movies to understand their taste.
-
-7. Respect the selected genre.
-
-8. Respect the selected release period.
-
-9. If plotTwist is "yes", prefer movies known for strong twists, reveals, surprises, or unconventional storytelling.
-
-10. If plotTwist is "no", prefer movies with straightforward storytelling.
-
-11. If plotTwist is "any", ignore the plot twist preference.
-
-12. Do not invent movie facts.
-
-13. Keep each explanation short.
-
-14. Return JSON only.
-
-15. Do not use Markdown.
-
-16. The reason should explain why the movie matches the user's taste.
-
-
-Return exactly this structure:
-
-{
-"recommendations": [
-{
-"id": 123,
-"reason": "Short explanation of why this movie matches the user's taste."
-}
-]
-}
-
-`;
-
-
-// ==================================================
-// TRY GEMINI MODELS
-// ==================================================
-
-let generatedText =
-null;
-
-let successfulModel =
-null;
-
-
-for (
-const model
-of GEMINI_MODELS
-) {
-
-try {
-
-generatedText =
-await askGemini(
-prompt,
-env,
-model
-);
-
-
-successfulModel =
-model;
-
-
-break;
-
-} catch (
-error
-) {
-
-console.error(
-`Gemini ${model} failed:`,
-error.message
-);
-
-}
-}
-
-
-// ==================================================
-// GEMINI SUCCESS
-// ==================================================
-
-if (
-generatedText
-) {
-
-try {
-
-const aiResult =
-JSON.parse(
-cleanJson(
-generatedText
-)
-);
-
-
-if (
-aiResult &&
-Array.isArray(
-aiResult.recommendations
-)
-) {
-
-const candidateMap =
-new Map(
-
-candidates.map(
-movie => [
-String(
-movie.id
-),
-movie
-]
-)
-
-);
-
-
-const favoriteIds =
-new Set(
-
-favoriteDetails.map(
-movie =>
-String(
-movie.id
-)
-)
-
-);
-
-
-const recommendations =
-aiResult
-.recommendations
-.map(
-item => {
-
-if (
-!item ||
-item.id ===
-undefined
-) {
-
-return null;
-}
-
-
-const movie =
-candidateMap.get(
-String(
-item.id
-)
-);
-
-
-if (
-!movie
-) {
-
-return null;
-}
-
-
-if (
-favoriteIds.has(
-String(
-movie.id
-)
-)
-) {
-
-return null;
-}
-
-
-return {
-
-id:
-movie.id,
-
-title:
-movie.title,
-
-year:
-movie.year,
-
-overview:
-movie.overview,
-
-rating:
-movie.rating,
-
-poster_path:
-movie.poster_path,
-
-reason:
-item.reason ||
-"This movie matches your preferences."
-
-};
-
-}
-)
-.filter(
-Boolean
-);
-
-
-if (
-recommendations.length
->= 10
-) {
-
-return jsonResponse({
-
-success:
-true,
-
-recommendations:
-recommendations
-.slice(
-0,
-10
-),
-
-source:
-"gemini",
-
-model:
-successfulModel
-
-});
-}
-}
-
-} catch (
-error
-) {
-
-console.error(
-"Gemini JSON error:",
-error.message
-);
-}
-}
-
-
-// ==================================================
-// GEMINI FAILED
-// USE TMDB FALLBACK
-// ==================================================
-
-const favoriteIds =
-new Set(
-
-favoriteDetails.map(
-movie =>
-String(
-movie.id
-)
-)
-
-);
-
-
-const fallbackRecommendations =
-candidates
-
-.filter(
-movie =>
-!favoriteIds.has(
-String(
-movie.id
-)
-)
-)
-
-.slice(
-0,
-10
-)
-
-.map(
-movie => ({
-
-id:
-movie.id,
-
-title:
-movie.title,
-
-year:
-movie.year,
-
-overview:
-movie.overview,
-
-rating:
-movie.rating,
-
-poster_path:
-movie.poster_path,
-
-reason:
-"Selected from TMDB based on your chosen genre and release period."
-
-})
-);
-
-
-return jsonResponse({
-
-success:
-true,
-
-recommendations:
-fallbackRecommendations,
-
-source:
-"tmdb-fallback",
-
-message:
-"Gemini is temporarily unavailable, so MovieMind is showing TMDB-based matches."
-
-});
-
-
-} catch (
-error
-) {
-
-console.error(
-error
-);
-
-
-return jsonResponse(
-
-{
-success:
-false,
-
-error:
-error.message ||
-"Something went wrong."
-},
-
-500
-);
-}
-}
-};
-
-
-// ================================================================
-// GEMINI
-// ================================================================
-
-async function askGemini(
-prompt,
-env,
-model
-) {
-
-const geminiUrl =
-`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-
-let lastError =
-null;
-
-
-// Two attempts per model
-for (
-let attempt = 1;
-attempt <= 2;
-attempt++
-) {
-
-try {
-
-const response =
-await fetch(
-geminiUrl,
-{
-
-method:
-"POST",
-
-headers: {
-
-"Content-Type":
-"application/json",
-
-"x-goog-api-key":
-env.GEMINI_API_KEY
-
-},
-
-body:
-JSON.stringify({
-
-contents: [
-
-{
-
-parts: [
-
-{
-text:
-prompt
-}
-
-]
-
-}
-
-],
-
-generationConfig: {
-
-responseMimeType:
-"application/json",
-
-thinkingConfig: {
-
-thinkingLevel:
-"low"
-
-}
-
-}
-
-})
-
-}
-);
-
-
-if (
-response.ok
-) {
-
-const data =
-await response.json();
-
-
-const text =
-data
-?.candidates?.[0]
-?.content?.parts?.[0]
-?.text;
-
-
-if (
-!text
-) {
-
-throw new Error(
-`Gemini ${model} returned no text.`
-);
-}
-
-
-return text;
-}
-
-
-const errorText =
-await response.text();
-
-
-lastError =
-new Error(
-`Gemini ${model} error ${response.status}: ${errorText}`
-);
-
-
-// --------------------------------------------------
-// RETRY TEMPORARY ERRORS
-// --------------------------------------------------
-
-if (
-
-response.status ===
-429 ||
-
-response.status ===
-500 ||
-
-response.status ===
-502 ||
-
-response.status ===
-503 ||
-
-response.status ===
-504
-
-) {
-
-const delay =
-attempt === 1
-? 1500
-: 3000;
-
-
-await sleep(
-delay
-);
-
-
-continue;
-}
-
-
-// Non-temporary error
-break;
-
-
-} catch (
-error
-) {
-
-lastError =
-error;
-
-
-if (
-attempt === 1
-) {
-
-await sleep(
-1500
-);
-}
-}
-}
-
-
-throw (
-lastError ||
-new Error(
-`Gemini ${model} failed.`
-)
-);
-}
-
-
-// ================================================================
-// CLEAN JSON
-// ================================================================
-
-function cleanJson(
-text
-) {
-
-let cleaned =
-text.trim();
-
-
-if (
-cleaned.startsWith(
-"```"
-)
-) {
-
-cleaned =
-cleaned
-
-.replace(
-/^```json\s*/i,
-""
-)
-
-.replace(
-/^```\s*/i,
-""
-)
-
-.replace(
-/\s*```$/i,
-""
-)
-
-.trim();
-}
-
-
-return cleaned;
-}
-
-
-// ================================================================
-// DATE RANGE
-// ================================================================
-
-function getDateRange(
-period
-) {
-
-switch (
-period
-) {
-
-case "2020-2027":
-
-return {
-
-gte:
-"2020-01-01",
-
-lte:
-"2027-12-31"
-
-};
-
-
-case "2010-2020":
-
-return {
-
-gte:
-"2010-01-01",
-
-lte:
-"2020-12-31"
-
-};
-
-
-case "2000-2010":
-
-return {
-
-gte:
-"2000-01-01",
-
-lte:
-"2010-12-31"
-
-};
-
-
-case "1990-2000":
-
-return {
-
-gte:
-"1990-01-01",
-
-lte:
-"2000-12-31"
-
-};
-
-
-case "1980-1990":
-
-return {
-
-gte:
-"1980-01-01",
-
-lte:
-"1990-12-31"
-
-};
-
-
-case "before-1980":
-
-return {
-
-gte:
-"1900-01-01",
-
-lte:
-"1979-12-31"
-
-};
-
-
-default:
-
-return null;
-}
-}
-
-
-// ================================================================
-// SLEEP
-// ================================================================
-
-function sleep(
-ms
-) {
-
-return new Promise(
-resolve =>
-setTimeout(
-resolve,
-ms
-)
-);
-}
-
-
-// ================================================================
-// JSON RESPONSE
-// ================================================================
-
-function jsonResponse(
-data,
-status = 200
-) {
-
-return new Response(
-
-JSON.stringify(
-data
-),
-
-{
-
-status,
-
-headers: {
-
-"Content-Type":
-"application/json",
-
-...CORS_HEADERS
-
-}
-
-}
-
-);
-}
