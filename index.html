@@ -1197,3 +1197,1228 @@ value
 
 </body>
 </html>
+
+
+On Thu, Sep 24, 2026 at 11:59 PM Adarh <kouzarikonstantina@gmail.com> wrote:
+https://movie-mind-api.pankouzaris.workers.dev/
+
+Στις Πέμ 24 Σεπ 2026 στις 11:58 μ.μ., ο/η Panayiotis Kouzaris <pankouzaris@gmail.com> έγραψε:
+const TMDB_BASE =
+"https://api.themoviedb.org/3";
+
+
+const GEMINI_MODELS = [
+
+"gemini-3.8-flash",
+
+"gemini-3.7-flash",
+
+"gemini-3.6-flash",
+
+"gemini-3.5-flash"
+
+];
+
+
+const GENRES = {
+
+"science fiction": 878,
+
+"thriller": 53,
+
+"action": 28,
+
+"drama": 18,
+
+"comedy": 35,
+
+"horror": 27,
+
+"romance": 10749,
+
+"mystery": 9648,
+
+"adventure": 12,
+
+"fantasy": 14
+
+};
+
+
+const CORS_HEADERS = {
+
+"Access-Control-Allow-Origin": "*",
+
+"Access-Control-Allow-Methods":
+"POST, OPTIONS",
+
+"Access-Control-Allow-Headers":
+"Content-Type"
+
+};
+
+
+export default {
+
+async fetch(
+request,
+env
+) {
+
+// ======================================================
+// CORS
+// ======================================================
+
+if (
+request.method ===
+"OPTIONS"
+) {
+
+return new Response(
+null,
+{
+status: 204,
+headers:
+CORS_HEADERS
+}
+);
+}
+
+
+// ======================================================
+// ONLY POST
+// ======================================================
+
+if (
+request.method !==
+"POST"
+) {
+
+return jsonResponse(
+{
+success: false,
+
+error:
+"Only POST requests are allowed."
+},
+
+405
+);
+}
+
+
+try {
+
+const body =
+await request.json();
+
+
+const genre =
+body.genre ||
+"any";
+
+
+const period =
+body.period ||
+"any";
+
+
+const plotTwist =
+body.plotTwist ||
+"any";
+
+
+const favoriteMovies =
+Array.isArray(
+body.favoriteMovies
+)
+? body.favoriteMovies
+: [];
+
+
+// ==================================================
+// TMDB DISCOVERY
+// ==================================================
+
+const dateRange =
+getDateRange(
+period
+);
+
+
+const params =
+new URLSearchParams();
+
+
+params.set(
+"api_key",
+env.TMDB_API_KEY
+);
+
+
+params.set(
+"language",
+"en-US"
+);
+
+
+params.set(
+"sort_by",
+"popularity.desc"
+);
+
+
+params.set(
+"include_adult",
+"false"
+);
+
+
+params.set(
+"include_video",
+"false"
+);
+
+
+params.set(
+"page",
+"1"
+);
+
+
+params.set(
+"vote_count.gte",
+"50"
+);
+
+
+if (
+genre !== "any" &&
+GENRES[genre]
+) {
+
+params.set(
+"with_genres",
+
+GENRES[
+genre
+].toString()
+);
+}
+
+
+if (dateRange) {
+
+params.set(
+"primary_release_date.gte",
+
+dateRange.gte
+);
+
+
+params.set(
+"primary_release_date.lte",
+
+dateRange.lte
+);
+}
+
+
+const discoverUrl =
+`${TMDB_BASE}/discover/movie?${params.toString()}`;
+
+
+const discoverResponse =
+await fetch(
+discoverUrl
+);
+
+
+if (
+!discoverResponse.ok
+) {
+
+const errorText =
+await discoverResponse.text();
+
+
+throw new Error(
+`TMDB error ${discoverResponse.status}: ${errorText}`
+);
+}
+
+
+const discoverData =
+await discoverResponse.json();
+
+
+const candidates =
+(
+discoverData.results ||
+[]
+)
+.slice(
+0,
+30
+)
+.map(
+movie => ({
+
+id:
+movie.id,
+
+title:
+movie.title,
+
+release_date:
+movie.release_date ||
+"",
+
+year:
+movie.release_date
+? movie.release_date.substring(
+0,
+4
+)
+: "Unknown",
+
+overview:
+movie.overview ||
+"",
+
+rating:
+movie.vote_average ||
+0,
+
+vote_count:
+movie.vote_count ||
+0,
+
+poster_path:
+movie.poster_path ||
+null
+
+})
+);
+
+
+if (
+candidates.length <
+10
+) {
+
+throw new Error(
+"TMDB returned fewer than 10 movies."
+);
+}
+
+
+// ==================================================
+// SEARCH FAVORITES
+// ==================================================
+
+const favoriteDetails =
+[];
+
+
+for (
+const movieName
+of favoriteMovies
+) {
+
+if (
+!movieName ||
+!movieName.trim()
+) {
+
+continue;
+}
+
+
+const searchParams =
+new URLSearchParams();
+
+
+searchParams.set(
+"api_key",
+env.TMDB_API_KEY
+);
+
+
+searchParams.set(
+"query",
+movieName.trim()
+);
+
+
+searchParams.set(
+"language",
+"en-US"
+);
+
+
+searchParams.set(
+"include_adult",
+"false"
+);
+
+
+const searchUrl =
+`${TMDB_BASE}/search/movie?${searchParams.toString()}`;
+
+
+const searchResponse =
+await fetch(
+searchUrl
+);
+
+
+if (
+!searchResponse.ok
+) {
+
+continue;
+}
+
+
+const searchData =
+await searchResponse.json();
+
+
+const match =
+searchData
+?.results
+?.[0];
+
+
+if (match) {
+
+favoriteDetails.push({
+
+id:
+match.id,
+
+title:
+match.title,
+
+release_date:
+match.release_date ||
+"",
+
+year:
+match.release_date
+? match.release_date.substring(
+0,
+4
+)
+: "Unknown",
+
+overview:
+match.overview ||
+"",
+
+rating:
+match.vote_average ||
+0
+
+});
+}
+}
+
+
+// ==================================================
+// GEMINI PROMPT
+// ==================================================
+
+const prompt = `
+
+You are MovieMind, an intelligent movie recommendation engine.
+
+Choose exactly 10 movies from the supplied TMDB candidate list.
+
+USER PREFERENCES
+
+Genre:
+${genre}
+
+Release period:
+${period}
+
+Plot twist preference:
+${plotTwist}
+
+
+USER'S FAVORITE MOVIES:
+
+${JSON.stringify(
+favoriteDetails,
+null,
+2
+)}
+
+
+CANDIDATE MOVIES:
+
+${JSON.stringify(
+candidates,
+null,
+2
+)}
+
+
+RULES:
+
+1. Return exactly 10 movies.
+
+2. ONLY select movies from the supplied TMDB candidate list.
+
+3. Never invent a movie.
+
+4. Never invent a TMDB ID.
+
+5. Never recommend one of the user's favorite movies.
+
+6. Use the user's favorite movies to understand their taste.
+
+7. Respect the selected genre.
+
+8. Respect the selected release period.
+
+9. If plotTwist is "yes", prefer movies known for strong twists, reveals, surprises, or unconventional storytelling.
+
+10. If plotTwist is "no", prefer movies with straightforward storytelling.
+
+11. If plotTwist is "any", ignore the plot twist preference.
+
+12. Do not invent movie facts.
+
+13. Keep each explanation short.
+
+14. Return JSON only.
+
+15. Do not use Markdown.
+
+16. The reason should explain why the movie matches the user's taste.
+
+
+Return exactly this structure:
+
+{
+"recommendations": [
+{
+"id": 123,
+"reason": "Short explanation of why this movie matches the user's taste."
+}
+]
+}
+
+`;
+
+
+// ==================================================
+// TRY GEMINI MODELS
+// ==================================================
+
+let generatedText =
+null;
+
+let successfulModel =
+null;
+
+
+for (
+const model
+of GEMINI_MODELS
+) {
+
+try {
+
+generatedText =
+await askGemini(
+prompt,
+env,
+model
+);
+
+
+successfulModel =
+model;
+
+
+break;
+
+} catch (
+error
+) {
+
+console.error(
+`Gemini ${model} failed:`,
+error.message
+);
+
+}
+}
+
+
+// ==================================================
+// GEMINI SUCCESS
+// ==================================================
+
+if (
+generatedText
+) {
+
+try {
+
+const aiResult =
+JSON.parse(
+cleanJson(
+generatedText
+)
+);
+
+
+if (
+aiResult &&
+Array.isArray(
+aiResult.recommendations
+)
+) {
+
+const candidateMap =
+new Map(
+
+candidates.map(
+movie => [
+String(
+movie.id
+),
+movie
+]
+)
+
+);
+
+
+const favoriteIds =
+new Set(
+
+favoriteDetails.map(
+movie =>
+String(
+movie.id
+)
+)
+
+);
+
+
+const recommendations =
+aiResult
+.recommendations
+.map(
+item => {
+
+if (
+!item ||
+item.id ===
+undefined
+) {
+
+return null;
+}
+
+
+const movie =
+candidateMap.get(
+String(
+item.id
+)
+);
+
+
+if (
+!movie
+) {
+
+return null;
+}
+
+
+if (
+favoriteIds.has(
+String(
+movie.id
+)
+)
+) {
+
+return null;
+}
+
+
+return {
+
+id:
+movie.id,
+
+title:
+movie.title,
+
+year:
+movie.year,
+
+overview:
+movie.overview,
+
+rating:
+movie.rating,
+
+poster_path:
+movie.poster_path,
+
+reason:
+item.reason ||
+"This movie matches your preferences."
+
+};
+
+}
+)
+.filter(
+Boolean
+);
+
+
+if (
+recommendations.length
+>= 10
+) {
+
+return jsonResponse({
+
+success:
+true,
+
+recommendations:
+recommendations
+.slice(
+0,
+10
+),
+
+source:
+"gemini",
+
+model:
+successfulModel
+
+});
+}
+}
+
+} catch (
+error
+) {
+
+console.error(
+"Gemini JSON error:",
+error.message
+);
+}
+}
+
+
+// ==================================================
+// GEMINI FAILED
+// USE TMDB FALLBACK
+// ==================================================
+
+const favoriteIds =
+new Set(
+
+favoriteDetails.map(
+movie =>
+String(
+movie.id
+)
+)
+
+);
+
+
+const fallbackRecommendations =
+candidates
+
+.filter(
+movie =>
+!favoriteIds.has(
+String(
+movie.id
+)
+)
+)
+
+.slice(
+0,
+10
+)
+
+.map(
+movie => ({
+
+id:
+movie.id,
+
+title:
+movie.title,
+
+year:
+movie.year,
+
+overview:
+movie.overview,
+
+rating:
+movie.rating,
+
+poster_path:
+movie.poster_path,
+
+reason:
+"Selected from TMDB based on your chosen genre and release period."
+
+})
+);
+
+
+return jsonResponse({
+
+success:
+true,
+
+recommendations:
+fallbackRecommendations,
+
+source:
+"tmdb-fallback",
+
+message:
+"Gemini is temporarily unavailable, so MovieMind is showing TMDB-based matches."
+
+});
+
+
+} catch (
+error
+) {
+
+console.error(
+error
+);
+
+
+return jsonResponse(
+
+{
+success:
+false,
+
+error:
+error.message ||
+"Something went wrong."
+},
+
+500
+);
+}
+}
+};
+
+
+// ================================================================
+// GEMINI
+// ================================================================
+
+async function askGemini(
+prompt,
+env,
+model
+) {
+
+const geminiUrl =
+`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+
+let lastError =
+null;
+
+
+// Two attempts per model
+for (
+let attempt = 1;
+attempt <= 2;
+attempt++
+) {
+
+try {
+
+const response =
+await fetch(
+geminiUrl,
+{
+
+method:
+"POST",
+
+headers: {
+
+"Content-Type":
+"application/json",
+
+"x-goog-api-key":
+env.GEMINI_API_KEY
+
+},
+
+body:
+JSON.stringify({
+
+contents: [
+
+{
+
+parts: [
+
+{
+text:
+prompt
+}
+
+]
+
+}
+
+],
+
+generationConfig: {
+
+responseMimeType:
+"application/json",
+
+thinkingConfig: {
+
+thinkingLevel:
+"low"
+
+}
+
+}
+
+})
+
+}
+);
+
+
+if (
+response.ok
+) {
+
+const data =
+await response.json();
+
+
+const text =
+data
+?.candidates?.[0]
+?.content?.parts?.[0]
+?.text;
+
+
+if (
+!text
+) {
+
+throw new Error(
+`Gemini ${model} returned no text.`
+);
+}
+
+
+return text;
+}
+
+
+const errorText =
+await response.text();
+
+
+lastError =
+new Error(
+`Gemini ${model} error ${response.status}: ${errorText}`
+);
+
+
+// --------------------------------------------------
+// RETRY TEMPORARY ERRORS
+// --------------------------------------------------
+
+if (
+
+response.status ===
+429 ||
+
+response.status ===
+500 ||
+
+response.status ===
+502 ||
+
+response.status ===
+503 ||
+
+response.status ===
+504
+
+) {
+
+const delay =
+attempt === 1
+? 1500
+: 3000;
+
+
+await sleep(
+delay
+);
+
+
+continue;
+}
+
+
+// Non-temporary error
+break;
+
+
+} catch (
+error
+) {
+
+lastError =
+error;
+
+
+if (
+attempt === 1
+) {
+
+await sleep(
+1500
+);
+}
+}
+}
+
+
+throw (
+lastError ||
+new Error(
+`Gemini ${model} failed.`
+)
+);
+}
+
+
+// ================================================================
+// CLEAN JSON
+// ================================================================
+
+function cleanJson(
+text
+) {
+
+let cleaned =
+text.trim();
+
+
+if (
+cleaned.startsWith(
+"```"
+)
+) {
+
+cleaned =
+cleaned
+
+.replace(
+/^```json\s*/i,
+""
+)
+
+.replace(
+/^```\s*/i,
+""
+)
+
+.replace(
+/\s*```$/i,
+""
+)
+
+.trim();
+}
+
+
+return cleaned;
+}
+
+
+// ================================================================
+// DATE RANGE
+// ================================================================
+
+function getDateRange(
+period
+) {
+
+switch (
+period
+) {
+
+case "2020-2027":
+
+return {
+
+gte:
+"2020-01-01",
+
+lte:
+"2027-12-31"
+
+};
+
+
+case "2010-2020":
+
+return {
+
+gte:
+"2010-01-01",
+
+lte:
+"2020-12-31"
+
+};
+
+
+case "2000-2010":
+
+return {
+
+gte:
+"2000-01-01",
+
+lte:
+"2010-12-31"
+
+};
+
+
+case "1990-2000":
+
+return {
+
+gte:
+"1990-01-01",
+
+lte:
+"2000-12-31"
+
+};
+
+
+case "1980-1990":
+
+return {
+
+gte:
+"1980-01-01",
+
+lte:
+"1990-12-31"
+
+};
+
+
+case "before-1980":
+
+return {
+
+gte:
+"1900-01-01",
+
+lte:
+"1979-12-31"
+
+};
+
+
+default:
+
+return null;
+}
+}
+
+
+// ================================================================
+// SLEEP
+// ================================================================
+
+function sleep(
+ms
+) {
+
+return new Promise(
+resolve =>
+setTimeout(
+resolve,
+ms
+)
+);
+}
+
+
+// ================================================================
+// JSON RESPONSE
+// ================================================================
+
+function jsonResponse(
+data,
+status = 200
+) {
+
+return new Response(
+
+JSON.stringify(
+data
+),
+
+{
+
+status,
+
+headers: {
+
+"Content-Type":
+"application/json",
+
+...CORS_HEADERS
+
+}
+
+}
+
+);
+}
