@@ -3,14 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MovieMind AI</title>
 
 <meta name="description" content="MovieMind AI gives you personalized movie recommendations using your taste, TMDB and Gemini AI.">
 
 <style>
-*{box-sizing:border-box}
 
-html{scroll-behavior:smooth}
+*{
+box-sizing:border-box
+}
+
+html{
+scroll-behavior:smooth
+}
 
 body{
 margin:0;
@@ -51,10 +57,58 @@ opacity:.28;
 z-index:-1;
 }
 
+/* =========================
+MODE SWITCH
+========================= */
+
+.mode-switch{
+position:fixed;
+top:20px;
+left:20px;
+z-index:1000;
+display:flex;
+background:rgba(5,12,25,.88);
+border:1px solid rgba(150,180,230,.25);
+border-radius:12px;
+padding:4px;
+box-shadow:0 10px 35px rgba(0,0,0,.35);
+backdrop-filter:blur(15px);
+}
+
+.mode-button{
+border:none;
+background:transparent;
+color:#8e9bb0;
+padding:10px 15px;
+border-radius:9px;
+font-size:11px;
+font-weight:bold;
+letter-spacing:1px;
+cursor:pointer;
+transition:.2s;
+}
+
+.mode-button.active{
+background:linear-gradient(135deg,#5b8def,#a8ceff);
+color:#06101f;
+}
+
+.mode-button:hover{
+color:white;
+}
+
+.mode-button.active:hover{
+color:#06101f;
+}
+
+/* =========================
+MAIN
+========================= */
+
 .container{
 width:min(900px,92%);
 margin:auto;
-padding:55px 0 30px;
+padding:100px 0 30px;
 }
 
 .hero{
@@ -130,6 +184,10 @@ border-radius:20px;
 background:rgba(10,18,35,.45);
 }
 
+/* =========================
+BOXES
+========================= */
+
 .recommendation-box{
 background:rgba(8,16,32,.86);
 border:1px solid rgba(150,180,230,.2);
@@ -174,7 +232,8 @@ outline:none;
 margin-bottom:10px;
 }
 
-select:focus,input:focus{
+select:focus,
+input:focus{
 border-color:#7ca9ff;
 box-shadow:0 0 0 3px rgba(124,169,255,.12);
 }
@@ -203,6 +262,10 @@ box-shadow:0 10px 30px rgba(100,150,255,.3);
 opacity:.6;
 cursor:wait;
 }
+
+/* =========================
+RESULTS
+========================= */
 
 .results{
 margin-top:45px;
@@ -235,8 +298,14 @@ animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-to{transform:rotate(360deg)}
+to{
+transform:rotate(360deg)
 }
+}
+
+/* =========================
+MOVIE CARDS
+========================= */
 
 #movieResults{
 display:grid;
@@ -355,6 +424,115 @@ font-size:13px;
 margin-top:15px;
 }
 
+/* =========================
+PANAYIOTIS PICKS
+========================= */
+
+.picks-intro{
+text-align:center;
+margin-bottom:30px;
+}
+
+.picks-intro h2{
+margin:0 0 12px;
+font-size:30px;
+}
+
+.picks-intro p{
+max-width:650px;
+margin:auto;
+color:#9daabd;
+line-height:1.7;
+font-size:14px;
+}
+
+.rating-note{
+margin:25px 0;
+padding:18px 20px;
+border-radius:14px;
+background:rgba(80,120,190,.10);
+border:1px solid rgba(130,170,230,.16);
+color:#b9c7dc;
+line-height:1.6;
+font-size:13px;
+}
+
+.rating-note strong{
+color:#dce9ff;
+}
+
+.picks-grid{
+display:grid;
+gap:14px;
+}
+
+.pick-card{
+display:grid;
+grid-template-columns:55px 1fr auto;
+align-items:center;
+gap:18px;
+padding:18px;
+border-radius:15px;
+background:rgba(10,20,38,.82);
+border:1px solid rgba(140,175,230,.14);
+transition:.2s;
+}
+
+.pick-card:hover{
+transform:translateX(4px);
+border-color:rgba(143,188,255,.35);
+}
+
+.pick-number{
+font-size:25px;
+font-weight:bold;
+color:#5f86c4;
+text-align:center;
+}
+
+.pick-title{
+font-size:18px;
+font-weight:bold;
+color:#f5f7ff;
+}
+
+.pick-year{
+font-size:13px;
+color:#7f8da5;
+margin-top:5px;
+}
+
+.pick-rating{
+font-size:18px;
+font-weight:bold;
+color:#ffd76a;
+white-space:nowrap;
+}
+
+.pick-link{
+display:block;
+margin-top:7px;
+font-size:11px;
+color:#8fbcff;
+text-decoration:none;
+font-weight:normal;
+}
+
+.pick-link:hover{
+text-decoration:underline;
+}
+
+.category-title{
+text-align:center;
+font-size:27px;
+margin:30px 0 20px;
+color:#dce9ff;
+}
+
+/* =========================
+FOOTER
+========================= */
+
 footer{
 text-align:center;
 margin-top:55px;
@@ -374,11 +552,27 @@ margin-bottom:14px;
 color:#9fc7ff;
 }
 
-@media(max-width:600px){
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:700px){
+
+.mode-switch{
+left:50%;
+transform:translateX(-50%);
+top:12px;
+width:max-content;
+}
+
+.mode-button{
+padding:9px 10px;
+font-size:9px;
+}
 
 .container{
 width:94%;
-padding-top:35px;
+padding-top:95px;
 }
 
 .hero h1{
@@ -432,17 +626,86 @@ gap:8px;
 .cosmic span{
 font-size:10px;
 }
+
+.pick-card{
+grid-template-columns:35px 1fr;
+gap:12px;
 }
+
+.pick-rating{
+grid-column:2;
+}
+
+.pick-number{
+font-size:20px;
+}
+
+.pick-title{
+font-size:16px;
+}
+
+}
+
+/* =========================
+VERY SMALL SCREENS
+========================= */
+
+@media(max-width:430px){
+
+.mode-button{
+padding:8px 7px;
+font-size:8px;
+letter-spacing:.5px;
+}
+
+.hero h1{
+font-size:45px;
+}
+
+.pick-card{
+padding:14px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- =========================
+MODE SWITCH
+========================= -->
+
+<div class="mode-switch">
+
+<button
+class="mode-button active"
+id="aiModeButton"
+onclick="showMode('ai')"
+>
+AI RECOMMENDER
+</button>
+
+<button
+class="mode-button"
+id="picksModeButton"
+onclick="showMode('picks')"
+>
+PANAYIOTIS' PICKS
+</button>
+
+</div>
+
 <div class="container">
+
+<!-- =========================
+HERO
+========================= -->
 
 <section class="hero">
 
-<div class="hero-badge">
+<div class="hero-badge" id="heroBadge">
 AI MOVIE RECOMMENDER
 </div>
 
@@ -450,7 +713,7 @@ AI MOVIE RECOMMENDER
 MOVIE<span>MIND</span>
 </h1>
 
-<p>
+<p id="heroDescription">
 Tell MovieMind what you like.
 It will search real movie data and use AI
 to find films that fit your taste.
@@ -471,9 +734,17 @@ Created by <strong>Panayiotis Kouzaris</strong>
 
 </section>
 
+<!-- =========================
+AI MODE
+========================= -->
+
+<section id="aiMode">
+
 <section class="recommendation-box">
 
-<h2>Find movies you'll love</h2>
+<h2>
+Find movies you'll love
+</h2>
 
 <div class="form-section">
 
@@ -573,7 +844,9 @@ placeholder="e.g. The Usual Suspects"
 
 <section id="results" class="results hidden">
 
-<h2>Your AI Recommendations</h2>
+<h2>
+Your AI Recommendations
+</h2>
 
 <div id="loading" class="loading hidden">
 
@@ -589,6 +862,122 @@ MovieMind is searching the stars...
 
 </section>
 
+</section>
+
+
+<!-- =========================
+PANAYIOTIS' PICKS
+========================= -->
+
+<section id="picksMode" class="hidden">
+
+<section class="recommendation-box">
+
+<div class="picks-intro">
+
+<h2>
+Panayiotis' Picks
+</h2>
+
+<p>
+A personal collection of Panayiotis Kouzaris'
+highest-rated movies, organized by genre.
+</p>
+
+</div>
+
+<div class="rating-note">
+
+<strong>How are these rankings calculated?</strong><br>
+
+The rankings are based on
+<strong>Panayiotis Kouzaris' personal Letterboxd ratings</strong>.
+Movies are ordered from highest personal rating to lowest.
+
+<br><br>
+
+The displayed rating is <strong>Panayiotis' own rating out of 5</strong>
+and is not a TMDB rating or a public average.
+
+</div>
+
+<div class="form-section">
+
+<label for="pickCategory">
+Choose a movie category
+</label>
+
+<select
+id="pickCategory"
+onchange="displayPicks()"
+>
+
+<option value="science-fiction">
+Science Fiction
+</option>
+
+<option value="thriller">
+Thriller
+</option>
+
+<option value="action">
+Action
+</option>
+
+<option value="drama">
+Drama
+</option>
+
+<option value="comedy">
+Comedy
+</option>
+
+<option value="horror">
+Horror
+</option>
+
+<option value="romance">
+Romance
+</option>
+
+<option value="mystery">
+Mystery
+</option>
+
+<option value="adventure">
+Adventure
+</option>
+
+<option value="fantasy">
+Fantasy
+</option>
+
+</select>
+
+</div>
+
+<h3
+id="categoryTitle"
+class="category-title"
+>
+My Top 10 Science Fiction Movies
+</h3>
+
+<div
+id="picksGrid"
+class="picks-grid"
+>
+</div>
+
+</section>
+
+</section>
+
+
+<!-- =========================
+FOOTER
+========================= -->
+
 <footer>
 
 <div class="footer-credit">
@@ -602,7 +991,12 @@ or certified by TMDB.
 
 </div>
 
+
 <script>
+
+/* =====================================================
+EXISTING AI RECOMMENDER
+===================================================== */
 
 const API_URL =
 "https://movie-mind-api.pankouzaris.workers.dev/";
@@ -653,7 +1047,8 @@ movieResults.innerHTML = "";
 
 recommendButton.disabled = true;
 
-recommendButton.textContent = "SEARCHING...";
+recommendButton.textContent =
+"SEARCHING...";
 
 resultsSection.scrollIntoView({
 behavior:"smooth"
@@ -890,6 +1285,892 @@ Please try again.
 
 }
 
+
+/* =====================================================
+PANAYIOTIS' PICKS
+===================================================== */
+
+/*
+These are based on the Letterboxd ratings
+provided by Panayiotis.
+
+The arrays are already in descending
+rating order.
+*/
+
+const PANAYIOTIS_PICKS = {
+
+/* =========================
+SCIENCE FICTION
+========================= */
+
+"science-fiction":[
+
+{
+title:"Interstellar",
+year:2014,
+rating:5.0
+},
+
+{
+title:"Predestination",
+year:2014,
+rating:4.5
+},
+
+{
+title:"Coherence",
+year:2013,
+rating:4.5
+},
+
+{
+title:"Inception",
+year:2010,
+rating:4.0
+},
+
+{
+title:"Her",
+year:2013,
+rating:4.0
+},
+
+{
+title:"Source Code",
+year:2011,
+rating:4.0
+},
+
+{
+title:"Children of Men",
+year:2006,
+rating:4.0
+},
+
+{
+title:"Passengers",
+year:2016,
+rating:4.0
+},
+
+{
+title:"About Time",
+year:2013,
+rating:4.0
+},
+
+{
+title:"Project Hail Mary",
+year:2026,
+rating:4.0
+}
+
+],
+
+
+/* =========================
+THRILLER
+========================= */
+
+"thriller":[
+
+{
+title:"Se7en",
+year:1995,
+rating:5.0
+},
+
+{
+title:"Primal Fear",
+year:1996,
+rating:5.0
+},
+
+{
+title:"The Sixth Sense",
+year:1999,
+rating:5.0
+},
+
+{
+title:"Fight Club",
+year:1999,
+rating:4.5
+},
+
+{
+title:"Prisoners",
+year:2013,
+rating:4.5
+},
+
+{
+title:"Zodiac",
+year:2007,
+rating:4.5
+},
+
+{
+title:"Shutter Island",
+year:2010,
+rating:4.5
+},
+
+{
+title:"The Butterfly Effect",
+year:2004,
+rating:4.5
+},
+
+{
+title:"Joker",
+year:2019,
+rating:4.5
+},
+
+{
+title:"The Da Vinci Code",
+year:2006,
+rating:4.5
+}
+
+],
+
+
+/* =========================
+ACTION
+========================= */
+
+"action":[
+
+{
+title:"Inglourious Basterds",
+year:2009,
+rating:4.5
+},
+
+{
+title:"The Dark Knight",
+year:2008,
+rating:4.0
+},
+
+{
+title:"Gladiator",
+year:2000,
+rating:4.0
+},
+
+{
+title:"American Sniper",
+year:2014,
+rating:4.0
+},
+
+{
+title:"Batman Begins",
+year:2005,
+rating:4.0
+},
+
+{
+title:"The Bourne Identity",
+year:2002,
+rating:3.5
+},
+
+{
+title:"The Bourne Ultimatum",
+year:2007,
+rating:3.5
+},
+
+{
+title:"Kingsman: The Secret Service",
+year:2014,
+rating:3.5
+},
+
+{
+title:"Django Unchained",
+year:2012,
+rating:4.0
+},
+
+{
+title:"Spider-Man",
+year:2002,
+rating:4.0
+}
+
+],
+
+
+/* =========================
+DRAMA
+========================= */
+
+"drama":[
+
+{
+title:"Interstellar",
+year:2014,
+rating:5.0
+},
+
+{
+title:"A Beautiful Mind",
+year:2001,
+rating:5.0
+},
+
+{
+title:"The Green Mile",
+year:1999,
+rating:4.5
+},
+
+{
+title:"The Shawshank Redemption",
+year:1994,
+rating:4.5
+},
+
+{
+title:"Schindler's List",
+year:1993,
+rating:4.5
+},
+
+{
+title:"Whiplash",
+year:2014,
+rating:4.0
+},
+
+{
+title:"The Theory of Everything",
+year:2014,
+rating:4.5
+},
+
+{
+title:"The Pianist",
+year:2002,
+rating:4.0
+},
+
+{
+title:"Forrest Gump",
+year:1994,
+rating:4.0
+},
+
+{
+title:"Good Will Hunting",
+year:1997,
+rating:4.0
+}
+
+],
+
+
+/* =========================
+COMEDY
+========================= */
+
+"comedy":[
+
+{
+title:"The Hangover",
+year:2009,
+rating:4.5
+},
+
+{
+title:"Horrible Bosses",
+year:2011,
+rating:4.0
+},
+
+{
+title:"The Hangover Part II",
+year:2011,
+rating:4.0
+},
+
+{
+title:"Meet the Parents",
+year:2000,
+rating:4.0
+},
+
+{
+title:"Murder Mystery",
+year:2019,
+rating:4.0
+},
+
+{
+title:"No Hard Feelings",
+year:2023,
+rating:4.0
+},
+
+{
+title:"Superbad",
+year:2007,
+rating:3.5
+},
+
+{
+title:"Horrible Bosses 2",
+year:2014,
+rating:3.0
+},
+
+{
+title:"The Nice Guys",
+year:2016,
+rating:3.0
+},
+
+{
+title:"The Dictator",
+year:2012,
+rating:3.0
+}
+
+],
+
+
+/* =========================
+HORROR
+========================= */
+
+"horror":[
+
+{
+title:"The Sixth Sense",
+year:1999,
+rating:5.0
+},
+
+{
+title:"The Others",
+year:2001,
+rating:3.5
+},
+
+{
+title:"A Quiet Place",
+year:2018,
+rating:3.5
+},
+
+{
+title:"Smile",
+year:2022,
+rating:3.5
+},
+
+{
+title:"The Exorcist",
+year:1973,
+rating:3.0
+},
+
+{
+title:"It",
+year:2017,
+rating:3.0
+},
+
+{
+title:"Orphan",
+year:2009,
+rating:3.0
+},
+
+{
+title:"Split",
+year:2016,
+rating:3.0
+},
+
+{
+title:"The Shining",
+year:1980,
+rating:2.5
+},
+
+{
+title:"A Quiet Place Part II",
+year:2020,
+rating:2.5
+}
+
+],
+
+
+/* =========================
+ROMANCE
+========================= */
+
+"romance":[
+
+{
+title:"Before Sunrise",
+year:1995,
+rating:4.5
+},
+
+{
+title:"Midnight in Paris",
+year:2011,
+rating:4.5
+},
+
+{
+title:"A Star Is Born",
+year:2018,
+rating:4.5
+},
+
+{
+title:"About Time",
+year:2013,
+rating:4.0
+},
+
+{
+title:"Me Before You",
+year:2016,
+rating:4.0
+},
+
+{
+title:"One Day",
+year:2011,
+rating:4.0
+},
+
+{
+title:"Love, Rosie",
+year:2014,
+rating:4.0
+},
+
+{
+title:"The Notebook",
+year:2004,
+rating:4.0
+},
+
+{
+title:"The Time Traveler's Wife",
+year:2009,
+rating:4.0
+},
+
+{
+title:"10 Things I Hate About You",
+year:1999,
+rating:4.0
+}
+
+],
+
+
+/* =========================
+MYSTERY
+========================= */
+
+"mystery":[
+
+{
+title:"Primal Fear",
+year:1996,
+rating:5.0
+},
+
+{
+title:"The Sixth Sense",
+year:1999,
+rating:5.0
+},
+
+{
+title:"Se7en",
+year:1995,
+rating:5.0
+},
+
+{
+title:"Shutter Island",
+year:2010,
+rating:4.5
+},
+
+{
+title:"Prisoners",
+year:2013,
+rating:4.5
+},
+
+{
+title:"Zodiac",
+year:2007,
+rating:4.5
+},
+
+{
+title:"The Butterfly Effect",
+year:2004,
+rating:4.5
+},
+
+{
+title:"Memento",
+year:2000,
+rating:4.0
+},
+
+{
+title:"The Usual Suspects",
+year:1995,
+rating:4.0
+},
+
+{
+title:"The Girl with the Dragon Tattoo",
+year:2011,
+rating:4.0
+}
+
+],
+
+
+/* =========================
+ADVENTURE
+========================= */
+
+"adventure":[
+
+{
+title:"Interstellar",
+year:2014,
+rating:5.0
+},
+
+{
+title:"Gladiator",
+year:2000,
+rating:4.0
+},
+
+{
+title:"The Revenant",
+year:2015,
+rating:4.0
+},
+
+{
+title:"Harry Potter and the Prisoner of Azkaban",
+year:2004,
+rating:3.0
+},
+
+{
+title:"The Martian",
+year:2015,
+rating:3.5
+},
+
+{
+title:"Pirates of the Caribbean: The Curse of the Black Pearl",
+year:2003,
+rating:2.0
+},
+
+{
+title:"Jurassic World",
+year:2015,
+rating:2.0
+},
+
+{
+title:"Jumanji: Welcome to the Jungle",
+year:2017,
+rating:2.5
+},
+
+{
+title:"Ready Player One",
+year:2018,
+rating:3.0
+},
+
+{
+title:"The Amazing Spider-Man",
+year:2012,
+rating:4.0
+}
+
+],
+
+
+/* =========================
+FANTASY
+========================= */
+
+"fantasy":[
+
+{
+title:"Harry Potter and the Prisoner of Azkaban",
+year:2004,
+rating:3.0
+},
+
+{
+title:"Edward Scissorhands",
+year:1990,
+rating:3.0
+},
+
+{
+title:"About Time",
+year:2013,
+rating:4.0
+},
+
+{
+title:"The Green Mile",
+year:1999,
+rating:4.5
+},
+
+{
+title:"The Curious Case of Benjamin Button",
+year:2008,
+rating:4.0
+},
+
+{
+title:"The Time Traveler's Wife",
+year:2009,
+rating:4.0
+},
+
+{
+title:"The Butterfly Effect",
+year:2004,
+rating:4.5
+},
+
+{
+title:"Joker",
+year:2019,
+rating:4.5
+},
+
+{
+title:"Harry Potter and the Philosopher's Stone",
+year:2001,
+rating:3.0
+},
+
+{
+title:"The Matrix",
+year:1999,
+rating:2.5
+}
+
+]
+
+};
+
+
+/* =====================================================
+MODE SWITCHING
+===================================================== */
+
+function showMode(mode){
+
+const aiMode =
+document.getElementById("aiMode");
+
+const picksMode =
+document.getElementById("picksMode");
+
+const aiButton =
+document.getElementById("aiModeButton");
+
+const picksButton =
+document.getElementById("picksModeButton");
+
+const heroBadge =
+document.getElementById("heroBadge");
+
+const heroDescription =
+document.getElementById("heroDescription");
+
+if(mode === "ai"){
+
+aiMode.classList.remove("hidden");
+
+picksMode.classList.add("hidden");
+
+aiButton.classList.add("active");
+
+picksButton.classList.remove("active");
+
+heroBadge.textContent =
+"AI MOVIE RECOMMENDER";
+
+heroDescription.textContent =
+"Tell MovieMind what you like. It will search real movie data and use AI to find films that fit your taste.";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}else{
+
+aiMode.classList.add("hidden");
+
+picksMode.classList.remove("hidden");
+
+aiButton.classList.remove("active");
+
+picksButton.classList.add("active");
+
+heroBadge.textContent =
+"PANAYIOTIS' PERSONAL PICKS";
+
+heroDescription.textContent =
+"Explore Panayiotis Kouzaris' highest-rated movies, organized by genre and ranked using his Letterboxd ratings.";
+
+displayPicks();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+}
+
+
+/* =====================================================
+DISPLAY PERSONAL PICKS
+===================================================== */
+
+function displayPicks(){
+
+const category =
+document.getElementById("pickCategory").value;
+
+const movies =
+PANAYIOTIS_PICKS[category] || [];
+
+const grid =
+document.getElementById("picksGrid");
+
+const title =
+document.getElementById("categoryTitle");
+
+const categoryNames = {
+
+"science-fiction":"Science Fiction",
+
+"thriller":"Thriller",
+
+"action":"Action",
+
+"drama":"Drama",
+
+"comedy":"Comedy",
+
+"horror":"Horror",
+
+"romance":"Romance",
+
+"mystery":"Mystery",
+
+"adventure":"Adventure",
+
+"fantasy":"Fantasy"
+
+};
+
+const categoryName =
+categoryNames[category];
+
+title.textContent =
+`My Top 10 ${categoryName} Movies`;
+
+grid.innerHTML = "";
+
+movies.forEach((movie,index)=>{
+
+const card =
+document.createElement("article");
+
+card.className =
+"pick-card";
+
+const tmdbSearch =
+"https://www.themoviedb.org/search/movie?query=" +
+encodeURIComponent(movie.title);
+
+card.innerHTML = `
+
+<div class="pick-number">
+#${index+1}
+</div>
+
+<div>
+
+<div class="pick-title">
+${escapeHtml(movie.title)}
+</div>
+
+<div class="pick-year">
+${movie.year}
+</div>
+
+<a
+class="pick-link"
+href="${tmdbSearch}"
+target="_blank"
+rel="noopener noreferrer"
+>
+View on TMDB →
+</a>
+
+</div>
+
+<div class="pick-rating">
+⭐ ${movie.rating.toFixed(1)}/5
+</div>
+
+`;
+
+grid.appendChild(card);
+
+});
+
+}
+
+
+/* =====================================================
+SECURITY HELPERS
+===================================================== */
+
 function escapeHtml(value){
 
 return String(value)
@@ -907,6 +2188,13 @@ function escapeAttribute(value){
 return escapeHtml(value);
 
 }
+
+
+/* =====================================================
+START WITH AI MODE
+===================================================== */
+
+showMode("ai");
 
 </script>
 
